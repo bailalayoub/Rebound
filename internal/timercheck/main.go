@@ -1,10 +1,12 @@
 // Command timercheck warns when this machine's Go timers fire late. A Docker Desktop VM up for
 // hours was seen firing a 10 ms timer after 92 ms: timing tests and the conformance run then fail
 // with timeouts although the code is fine. scripts/in-docker.sh runs it before every target. It
-// only warns (stderr) and always exits 0.
+// only warns (stderr) and always exits 0. With -v it also prints the measured latency on stdout,
+// for the record of a load run (scripts/stress).
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"time"
@@ -50,8 +52,23 @@ func warning(took time.Duration) string {
 		sample, took.Round(time.Millisecond))
 }
 
+// report states what one wait of sample took, and whether that is healthy.
+func report(took time.Duration) string {
+	verdict := "ok"
+	if warning(took) != "" {
+		verdict = "SLOW"
+	}
+	return fmt.Sprintf("timercheck: a %v timer takes %v (%s)\n", sample, took.Round(10*time.Microsecond), verdict)
+}
+
 func main() {
-	if w := warning(measure(realTimers{}, sample, samples)); w != "" {
+	verbose := flag.Bool("v", false, "print the measured latency on stdout")
+	flag.Parse()
+	took := measure(realTimers{}, sample, samples)
+	if *verbose {
+		_, _ = fmt.Fprint(os.Stdout, report(took)) // best effort, like the warning
+	}
+	if w := warning(took); w != "" {
 		_, _ = fmt.Fprint(os.Stderr, w) // best effort: a warning, never a failure
 	}
 }

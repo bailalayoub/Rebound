@@ -36,3 +36,9 @@ func TestWarning(t *testing.T) {
 	assert.Contains(t, w, "a 10ms timer takes 92ms")
 	assert.Contains(t, w, "wsl --shutdown")
 }
+
+func TestReport(t *testing.T) {
+	t.Parallel()
+	assert.Equal(t, "timercheck: a 10ms timer takes 10.12ms (ok)\n", report(10123*time.Microsecond))
+	assert.Equal(t, "timercheck: a 10ms timer takes 92ms (SLOW)\n", report(92*time.Millisecond))
+}
