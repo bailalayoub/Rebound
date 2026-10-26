@@ -154,8 +154,7 @@ func (rd *reader) run(ctx context.Context) {
 			return
 		}
 		if ctx.Err() != nil {
-			rd.stats.endedBy(EndDeadline)
-			return
+			return // the connection's log already says deadline
 		}
 		switch log.Ended {
 		case EndTransport, EndStatus:
@@ -192,8 +191,15 @@ func (rd *reader) connection(ctx context.Context) (log ConnLog, final bool) {
 	}
 	opened := time.Now()
 	resp, err := rd.client.Do(req)
+	if err == nil {
+		rd.stats.connected(time.Since(opened))
+	}
 	if err != nil {
-		if connCtx.Err() != nil && ctx.Err() == nil {
+		switch {
+		case ctx.Err() != nil:
+			log.Ended = EndDeadline
+			return log, false
+		case connCtx.Err() != nil:
 			log.Ended = EndDropped // the drop timer fired before the headers
 			return log, false
 		}
@@ -228,7 +234,9 @@ func (rd *reader) readBody(ctx, connCtx context.Context, body io.Reader, opened 
 			case paused:
 				log.Ended = EndReleased
 				rd.released = true
-			case connCtx.Err() != nil && ctx.Err() == nil:
+			case ctx.Err() != nil:
+				log.Ended = EndDeadline // the reader gave up while the stream was still running
+			case connCtx.Err() != nil:
 				log.Ended = EndDropped
 			case errors.Is(err, io.EOF):
 				log.Ended = EndServerEOF

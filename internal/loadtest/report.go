@@ -169,6 +169,8 @@ type PhaseReport struct {
 	EventsReceived   int64                     `json:"events_received"`
 	EventsPerS       float64                   `json:"events_per_s"`
 	TTFE             Summary                   `json:"ttfe"`
+	StartLat         Summary                   `json:"start_latency"`
+	ConnectLat       Summary                   `json:"connect_latency"`
 	Latency          Summary                   `json:"latency"`
 	Replay           Summary                   `json:"replay_latency"`
 	HTTPErrors       map[string]int            `json:"http_errors"`
@@ -229,13 +231,15 @@ func (ps *phaseStats) report(runStart, from, to time.Time, windows []*Window) Ph
 	for h, m := range ps.served {
 		pr.Served[h] = maps.Clone(m)
 	}
-	ttfe, lat, replay := NewHistogram(), NewHistogram(), NewHistogram()
+	ttfe, lat, replay, start, connect := NewHistogram(), NewHistogram(), NewHistogram(), NewHistogram(), NewHistogram()
 	var secs float64
 	for _, w := range windows {
 		if w.End.Before(from) || w.End.After(to.Add(time.Millisecond)) || !w.End.After(from) {
 			continue
 		}
 		ttfe.Merge(w.TTFE)
+		start.Merge(w.StartLat)
+		connect.Merge(w.ConnectLat)
 		lat.Merge(w.Latency)
 		replay.Merge(w.Replay)
 		pr.EventsReceived += w.events.Load()
@@ -250,6 +254,7 @@ func (ps *phaseStats) report(runStart, from, to time.Time, windows []*Window) Ph
 		w.mu.Unlock()
 	}
 	pr.TTFE, pr.Latency, pr.Replay = ttfe.Summarize(), lat.Summarize(), replay.Summarize()
+	pr.StartLat, pr.ConnectLat = start.Summarize(), connect.Summarize()
 	if secs > 0 {
 		pr.EventsPerS = round3(float64(pr.EventsReceived) / secs)
 	}
@@ -275,16 +280,16 @@ func (r *Report) WriteTable(w io.Writer) error {
 	// The tabwriter buffers every line: Flush returns the first write error.
 	_, _ = fmt.Fprintf(tw, "seed %d, timer 10ms: %.2f ms before, %.2f ms after, unfinished %d, passed %v\n",
 		r.Seed, r.TimerBefore, r.TimerAfter, r.Unfinished, r.Passed)
-	_, _ = fmt.Fprintln(tw, "phase\tstreams\tstart err\treaders\tconns\tev/s\tttfe p50/p95/p99 ms\tlat p50/p95/p99 ms\thttp errors\tintegrity\tterminals\tpass")
+	_, _ = fmt.Fprintln(tw, "phase\tstreams\tstart err\treaders\tconns\tev/s\tttfe p50/p95/p99 ms\tstart p50/p99\tconnect p50/p99\tlat p50/p95/p99 ms\thttp errors\tintegrity\tterminals\tpass")
 	phases := r.Phases
 	if r.Slow != nil {
 		phases = append(slices.Clip(phases), *r.Slow)
 	}
 	for i := range phases {
 		p := &phases[i]
-		_, _ = fmt.Fprintf(tw, "%s\t%d\t%d\t%d\t%d\t%.0f\t%.1f/%.1f/%.1f\t%.1f/%.1f/%.1f\t%s\t%s\t%s\t%v\n",
+		_, _ = fmt.Fprintf(tw, "%s\t%d\t%d\t%d\t%d\t%.0f\t%.1f/%.1f/%.1f\t%.1f/%.1f\t%.1f/%.1f\t%.1f/%.1f/%.1f\t%s\t%s\t%s\t%v\n",
 			p.Name, p.StreamsStarted, p.StartErrors, p.Readers, p.Conns, p.EventsPerS,
-			p.TTFE.P50, p.TTFE.P95, p.TTFE.P99, p.Latency.P50, p.Latency.P95, p.Latency.P99,
+			p.TTFE.P50, p.TTFE.P95, p.TTFE.P99, p.StartLat.P50, p.StartLat.P99, p.ConnectLat.P50, p.ConnectLat.P99, p.Latency.P50, p.Latency.P95, p.Latency.P99,
 			formatCounts(p.HTTPErrors), formatCounts(p.Integrity), formatCounts(p.Terminals), p.Passed)
 	}
 	return tw.Flush()

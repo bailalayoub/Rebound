@@ -253,6 +253,8 @@ func TestRun_RealHub(t *testing.T) {
 	assert.Zero(t, p.AuditUnavailable)
 	assert.Equal(t, map[string]int{"solo": p.StreamsStarted}, p.Producers)
 	assert.Equal(t, uint64(p.Readers), p.TTFE.Count)                         //nolint:gosec // a count
+	assert.Equal(t, uint64(p.StreamsStarted), p.StartLat.Count)              //nolint:gosec // a count
+	assert.Equal(t, uint64(p.Conns), p.ConnectLat.Count)                     //nolint:gosec // a count
 	assert.Equal(t, p.EventsReceived, int64(p.Latency.Count+p.Replay.Count)) //nolint:gosec // a count
 	assert.Positive(t, p.Ended[EndDropped])
 	assert.Empty(t, p.HTTPErrors)

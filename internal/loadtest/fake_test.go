@@ -88,6 +88,10 @@ func (f *fakeServer) serveStream(w http.ResponseWriter, r *http.Request, id stri
 		_, _ = fmt.Fprintf(w, "id: %d\nevent: data\ndata: %s\n\n", seq, data)
 	}
 	switch {
+	case f.mode == "stall":
+		w.(http.Flusher).Flush()
+		<-r.Context().Done() // never sends the terminal event, never closes
+		return
 	case f.mode == "missing":
 		return // ends the body without the terminal event
 	case f.mode == "differs" && nth%2 == 0:
@@ -163,4 +167,22 @@ func TestChecker_CleanServerPasses(t *testing.T) {
 	assert.True(t, rep.Passed)
 	assert.Positive(t, p.Ended[EndDropped], "the drop policy was applied")
 	assert.NotEmpty(t, p.Served["app-1"], "the X-Upstream of every connection is counted")
+}
+
+// A reader that gives up on a stream still running says so: its connection ended at the
+// deadline, not with a read error, and the stream has no terminal.
+func TestReader_DeadlineIsReportedAsSuch(t *testing.T) {
+	t.Parallel()
+	cfg := DefaultConfig()
+	cfg.BaseURL = newFakeServer(t, "stall", 6).URL
+	cfg.Phases = []Phase{{Spec: "test", Streams: 1, ReadersMin: 1, ReadersMax: 1, Hold: 20 * time.Millisecond}}
+	cfg.Stream = StartRequest{Events: 6, DelayMS: 0}
+	cfg.Window = 10 * time.Millisecond
+	cfg.Slack = 200 * time.Millisecond
+	rep, err := Run(context.Background(), cfg)
+	require.NoError(t, err)
+	p := rep.Phases[0]
+	assert.Positive(t, p.Ended[EndDeadline])
+	assert.Zero(t, p.Ended[EndReadError])
+	assert.Positive(t, p.Integrity[ClassMissing])
 }

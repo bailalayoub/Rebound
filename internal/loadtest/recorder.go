@@ -10,8 +10,10 @@ import (
 // Window holds what the readers measured during one interval of a run.
 type Window struct {
 	Start time.Time
-	// TTFE is the time from sending the start request to a reader's first event.
-	TTFE *Histogram
+	// TTFE is the time from sending the start request to a reader's first event. It is made of
+	// StartLat (POST /loadtest/streams until its 201), then for each reader ConnectLat (GET until
+	// the response headers), then the wait for the first event.
+	TTFE, StartLat, ConnectLat *Histogram
 	// Latency is the delay from the producer's write (the payload's T) to a reader receiving the
 	// event, for events written while the connection was open; Replay is the same for events
 	// written before the connection was opened (a resume replaying what it missed).
@@ -32,7 +34,8 @@ type Window struct {
 
 func newWindow(start time.Time) *Window {
 	return &Window{
-		Start: start, TTFE: NewHistogram(), Latency: NewHistogram(), Replay: NewHistogram(),
+		Start: start, TTFE: NewHistogram(), StartLat: NewHistogram(), ConnectLat: NewHistogram(),
+		Latency: NewHistogram(), Replay: NewHistogram(),
 		errors: map[string]int{}, ended: map[string]int{},
 	}
 }
@@ -66,6 +69,18 @@ func (r *Recorder) window() *Window {
 func (r *Recorder) firstEvent(d time.Duration) {
 	if w := r.window(); w != nil {
 		w.TTFE.Record(d)
+	}
+}
+
+func (r *Recorder) started(d time.Duration) {
+	if w := r.window(); w != nil {
+		w.StartLat.Record(d)
+	}
+}
+
+func (r *Recorder) connected(d time.Duration) {
+	if w := r.window(); w != nil {
+		w.ConnectLat.Record(d)
 	}
 }
 
@@ -147,6 +162,8 @@ type WindowReport struct {
 	Conns          int64          `json:"conns"`
 	Resumes        int64          `json:"resumes"`
 	TTFE           Summary        `json:"ttfe"`
+	StartLat       Summary        `json:"start_latency"`
+	ConnectLat     Summary        `json:"connect_latency"`
 	Latency        Summary        `json:"latency"`
 	Replay         Summary        `json:"replay_latency"`
 	Errors         map[string]int `json:"errors,omitempty"`
@@ -168,6 +185,8 @@ func (w *Window) report(runStart time.Time) WindowReport {
 		Conns:          w.conns.Load(),
 		Resumes:        w.resumes.Load(),
 		TTFE:           w.TTFE.Summarize(),
+		StartLat:       w.StartLat.Summarize(),
+		ConnectLat:     w.ConnectLat.Summarize(),
 		Latency:        w.Latency.Summarize(),
 		Replay:         w.Replay.Summarize(),
 		Errors:         maps.Clone(w.errors),

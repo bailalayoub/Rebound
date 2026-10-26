@@ -355,7 +355,11 @@ func (d *driver) startStream(ctx context.Context, req StartRequest) (string, err
 		return "", err
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
+	sent := time.Now()
 	resp, err := d.cfg.Client.Do(httpReq)
+	if err == nil {
+		d.rec.started(time.Since(sent))
+	}
 	if err != nil {
 		d.rec.httpError("start", "transport")
 		return "", fmt.Errorf("loadtest: start: %w", err)
