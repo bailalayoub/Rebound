@@ -1,0 +1,38 @@
+{
+  "name": "@bailalayoub/rebound-client",
+  "version": "0.1.0",
+  "description": "Resumable Server-Sent Events client for Rebound: reconnects with Last-Event-ID and never delivers an event twice.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bailalayoub/rebound.git",
+    "directory": "clients/typescript"
+  },
+  "keywords": ["sse", "server-sent-events", "eventsource", "resumable", "last-event-id", "llm", "streaming"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsc -p tsconfig.json --noEmit && vitest run"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  }
+}

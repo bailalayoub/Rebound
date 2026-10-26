@@ -1,0 +1,19 @@
+# Local development: a Redis for integration tests. The multi-instance demo lives in deploy/.
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379" # local only: no password, protected mode off
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  # A single-node Redis Cluster for the cluster integration test (slots are assigned by the test).
+  redis-cluster:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:7000:7000"
+    command: ["redis-server", "--port", "7000", "--cluster-enabled", "yes", "--cluster-announce-ip", "127.0.0.1",
+              "--save", "", "--appendonly", "no"]

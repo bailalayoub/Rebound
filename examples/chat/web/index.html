@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rebound chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Rebound chat</h1>
+      <p class="hint">Drop the connection, reload the page, switch instances: the answer keeps going.</p>
+    </header>
+
+    <section id="answer" aria-live="polite">
+      <div class="meta">
+        <span id="state" class="badge">idle</span>
+        <span id="model" class="badge" title="model answering (provider · model)">model: –</span>
+        <span id="instance" class="badge" title="instance generating the answer">instance: –</span>
+        <span id="reconnects" class="badge">reconnections: 0</span>
+        <span id="cursor" class="badge">last event: 0</span>
+      </div>
+      <p id="text"></p>
+      <p id="status" class="status" role="status"></p>
+      <p id="share" class="share" hidden>
+        <a id="share-link" href="#" target="_blank" rel="noopener">Follow this answer in another tab</a>
+      </p>
+    </section>
+
+    <form id="form">
+      <input id="message" name="message" autocomplete="off" placeholder="Ask something (try “!fail” or “!hang”)" required>
+      <button id="send" type="submit">Send</button>
+      <button id="long" type="button" title="Asks for a detailed ~800-word answer: time to reload and drop the connection">Long answer</button>
+      <button id="cancel" type="button" disabled>Cancel</button>
+    </form>
+
+    <label class="toggle">
+      <input id="drops" type="checkbox"> Simulate network drops (every 5 events)
+    </label>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

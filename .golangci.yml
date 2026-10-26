@@ -1,0 +1,62 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  default: none
+  enable:
+    - bodyclose
+    - contextcheck
+    - errcheck
+    - errorlint
+    - forcetypeassert
+    - gocritic
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - nilerr
+    - noctx
+    - prealloc
+    - revive
+    - staticcheck
+    - unparam
+    - unused
+  settings:
+    gocritic:
+      enabled-tags: [diagnostic, performance, style]
+      disabled-checks: [hugeParam, whyNoLint]
+    gosec:
+      excludes:
+        - G404 # math/rand is fine in the conformance tester; crypto/rand is enforced by review for ids
+    revive:
+      rules:
+        - name: exported
+          arguments: ["checkPrivateReceivers", "sayRepetitiveInsteadOfStutters"]
+        - name: context-as-argument
+        - name: error-strings
+        - name: error-naming
+        - name: var-naming
+        - name: receiver-naming
+        - name: unexported-return
+  exclusions:
+    generated: lax
+    rules:
+      - path: _test\.go
+        linters: [gosec, unparam, forcetypeassert]
+      - path: cmd/rebound-conformance/
+        linters: [gosec]
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes: [github.com/bailalayoub/rebound]
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

@@ -1,0 +1,80 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The two supported Go releases (ADR 0003): the go.mod floor and the latest stable.
+        go: ["1.26.x", "stable"]
+    name: check (go ${{ matrix.go }})
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: ${{ matrix.go }}
+          # The runner cache can lag a patch release; stdlib security fixes ship in patches.
+          check-latest: true
+          cache: true
+      - name: Install tools
+        run: make tools
+      - name: Check (fmt, vet, lint, race tests)
+        run: make check
+      - name: Coverage gate
+        run: make cover
+      - name: README quick start
+        run: make readme-check
+      - name: Vulnerabilities
+        run: govulncheck ./...
+
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.26.x"
+          check-latest: true
+          cache: true
+      - name: Start a single-node Redis Cluster
+        run: >-
+          docker run -d --name redis-cluster -p 7000:7000 redis:7-alpine
+          redis-server --port 7000 --cluster-enabled yes --cluster-announce-ip 127.0.0.1
+          --save "" --appendonly no
+      - name: Integration tests
+        run: make test-integration
+        env:
+          REDIS_ADDR: localhost:6379
+          REDIS_CLUSTER_ADDR: localhost:7000
+      - name: Conformance (memory)
+        run: make conformance
+
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        if: hashFiles('clients/typescript/package.json') != ''
+        with:
+          node-version: "22"
+      - name: TypeScript client tests and npm pack check
+        if: hashFiles('clients/typescript/package.json') != ''
+        run: make client-test
+      - name: Vendored client in the example UI is up to date
+        if: hashFiles('clients/typescript/package.json') != ''
+        run: make client-build && git diff --exit-code examples/chat/web/vendor
