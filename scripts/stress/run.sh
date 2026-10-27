@@ -9,8 +9,8 @@
 # The harness runs in a container on the compose network, pinned to CPUs 8-11 (the stack is on
 # 0-7, scripts/stress/compose.yml), built without -race: it is a throughput measurement. Before
 # every run the VM timers are checked (internal/timercheck -v) and the result kept with the run.
-# Env: OUT, BASE_URL (default http://nginx:8080), LOAD_CPUS (8-11), SEED, NGINX (shipped|tuned,
-# applied by `up`).
+# Env: OUT, BASE_URL (default http://nginx:8080), LOAD_CPUS (8-11), SEED, NGINX (shipped|tuned) and
+# REDIS (shipped|aof), both applied by `up`.
 set -euo pipefail
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 hostroot="$root"
@@ -26,6 +26,8 @@ if pwd -W >/dev/null 2>&1; then hostout="$(cd "$out" && pwd -W)"; fi
 compose=(docker compose -f "$hostroot/deploy/docker-compose.yml" -f "$hostroot/scripts/stress/compose.yml")
 # NGINX=tuned raises nginx's connection limits (scripts/stress/nginx-tuned.conf); default: as shipped.
 if [ "${NGINX:-shipped}" = tuned ]; then compose+=(-f "$hostroot/scripts/stress/nginx-tuned.yml"); fi
+# REDIS=aof gives Redis an append-only file (scripts/stress/redis-aof.yml); default: no persistence.
+if [ "${REDIS:-shipped}" = aof ]; then compose+=(-f "$hostroot/scripts/stress/redis-aof.yml"); fi
 network="${NETWORK:-deploy_default}"
 base="${BASE_URL:-http://nginx:8080}"
 cpus="${LOAD_CPUS:-8-11}"
@@ -156,7 +158,7 @@ fault() {
     done
     printf '%s done\n' "$(date -u +%FT%T.%3NZ)" >>"$out/$name.fault.log"
   ) &
-  measured "$name" 10s -phases "${FAULT_PHASES:-200x1-3@4m}" -events 600 -delay-ms 50 -audit 1 -window 5s -slack 3m
+  measured "$name" 10s -phases "${FAULT_PHASES:-200x1-3@4m}" -events "${FAULT_EVENTS:-600}" -delay-ms 50 -audit 1 -window 5s -slack 3m
   wait
 }
 
@@ -221,6 +223,11 @@ case "${1:-}" in
     build
     fault "${2:-fault-redis}" 60 "docker stop -t 1 deploy-redis-1" "sleep 2" "docker start deploy-redis-1"
     ;;
+  fault-redis-pause)
+    # Test 5a, variant: Redis frozen for 2 s (docker pause): unavailable, but its data is kept.
+    build
+    fault "${2:-fault-redis-pause}" 60 "docker pause deploy-redis-1" "sleep 2" "docker unpause deploy-redis-1"
+    ;;
   fault-kill)
     # Test 5b: app-1 killed (SIGKILL) under load, started again 60 s later.
     build
@@ -233,10 +240,11 @@ case "${1:-}" in
     ;;
   slow)
     # Test 6: SLOW streams whose reader stops reading after 10 events for 60 s, next to a normal
-    # load; slow-control is the same load without them.
+    # load; slow-control is the same load without them. SLOW_AFTER above SLOW_EVENTS keeps the same
+    # large streams but a reader that never pauses: the control for the volume they write.
     build
     measured "${2:-slow}" 10s -phases "${SLOW_PHASES:-200x1-3@4m}" -slow-streams "${SLOW:-6}" -slow-events "${SLOW_EVENTS:-1500}" \
-      -slow-size 32768 -slow-delay-ms 5 -slow-after 10 -slow-pause 60s -audit 0.05 -window 10s
+      -slow-size 32768 -slow-delay-ms 5 -slow-after "${SLOW_AFTER:-10}" -slow-pause 60s -audit 0.05 -window 10s
     ;;
   slow-control)
     build

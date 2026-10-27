@@ -127,8 +127,9 @@ spike: ## Stress test 3: idle to 5x STREAMS in 10 s, then back
 storm: ## Stress test 4: readers reconnecting every 1-5 events (DROP=ms:5-50 for the timed variant)
 	$(STRESS) storm $(or $(NAME),storm)
 
-faults: ## Stress test 5: Redis restart, kill app-1, graceful stop of app-2, under load
+faults: ## Stress test 5: Redis restart and pause, kill app-1, graceful stop of app-2, under load
 	$(STRESS) fault-redis
+	$(STRESS) fault-redis-pause
 	$(STRESS) fault-kill
 	$(STRESS) fault-stop
 
