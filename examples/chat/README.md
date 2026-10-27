@@ -22,7 +22,8 @@ LLM_PROVIDER=openai LLM_API_KEY=sk-… LLM_MODEL=gpt-6-luna go run ./examples/ch
 | `LLM_STREAM_USAGE` | `1` | `0` omits `stream_options.include_usage` |
 | `INSTANCE_NAME` | hostname | shown in the UI and `/healthz`, to make multi-instance demos visible |
 | `FAKE_DELAY_MS`, `FAKE_REPEAT` | `120`, `2` | pace and length of the fake answer |
-| `CONFORMANCE` | off | `1` mounts `POST /conformance/streams`, the test-only producer of `rebound-conformance` |
+| `CONFORMANCE` | off | `1` mounts `POST /conformance/streams`, the test-only producer of `rebound-conformance`, and `POST /loadtest/streams`, the timestamped producer of `rebound-load` |
+| `DEBUG_ADDR` | off | a loopback address (e.g. `127.0.0.1:6060`) serving expvar (`/debug/vars`: goroutines, RSS, open fds, memstats) and pprof; refused if not loopback |
 
 Two instances behind nginx round-robin on one Redis: `docker compose -f deploy/docker-compose.yml up --build`
 (listens on 127.0.0.1:8080). The same on a real model, with ready-made settings for OpenAI, Groq,
