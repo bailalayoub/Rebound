@@ -1,0 +1,6 @@
+2026-10-26T23:06:52.445Z docker kill deploy-app-1-1
+deploy-app-1-1
+2026-10-26T23:06:53.485Z sleep 60
+2026-10-26T23:07:53.560Z docker start deploy-app-1-1
+deploy-app-1-1
+2026-10-26T23:07:54.149Z done

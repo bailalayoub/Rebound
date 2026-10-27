@@ -1,0 +1,18 @@
+$ rebound-load analyze -in soak-1.deploy-app-1-1.csv,soak-1.deploy-app-2-1.csv,soak-1.host.csv -series deploy-app-1-1:rss_bytes,deploy-app-1-1:heap_alloc_bytes,deploy-app-1-1:heap_inuse_bytes,deploy-app-1-1:goroutines,deploy-app-1-1:open_fds,deploy-app-2-1:rss_bytes,deploy-app-2-1:heap_alloc_bytes,deploy-app-2-1:heap_inuse_bytes,deploy-app-2-1:goroutines,deploy-app-2-1:open_fds,redis:used_memory,redis:keys,redis:connected_clients,deploy-redis-1:mem_bytes,deploy-nginx-1:mem_bytes -from 23m -to 2h3m
+series                           n    first        last         min          max          mean         slope/h     slope %mean/h  R²
+deploy-app-1-1:rss_bytes         100  6.57695e+07  6.65354e+07  6.40573e+07  6.66788e+07  6.63106e+07  6.447e+05   0.972          0.481
+deploy-app-1-1:heap_alloc_bytes  100  2.39967e+07  2.08018e+07  1.6805e+07   3.39639e+07  2.40935e+07  -1.06e+06   -4.401         0.013
+deploy-app-1-1:heap_inuse_bytes  100  2.8672e+07   2.77299e+07  2.64684e+07  3.66182e+07  2.9675e+07   -9.672e+05  -3.259         0.044
+deploy-app-1-1:goroutines        100  352          343          313          382          343.19       0.7889      0.230          0.001
+deploy-app-1-1:open_fds          100  309          282          275          323          295.1        -21.92      -7.429         0.667
+deploy-app-2-1:rss_bytes         100  6.55401e+07  6.62159e+07  6.47045e+07  6.6347e+07   6.58463e+07  4.92e+05    0.747          0.451
+deploy-app-2-1:heap_alloc_bytes  100  3.34614e+07  2.24157e+07  1.74147e+07  3.5392e+07   2.6633e+07   -9.9e+05    -3.717         0.009
+deploy-app-2-1:heap_inuse_bytes  100  3.58236e+07  2.87539e+07  2.72466e+07  3.77979e+07  3.13959e+07  -7.06e+05   -2.249         0.017
+deploy-app-2-1:goroutines        100  349          349          313          373          342.57       -3.479      -1.016         0.017
+deploy-app-2-1:open_fds          100  323          299          286          334          306.45       -12.87      -4.200         0.479
+redis:used_memory                100  9.04031e+07  9.04782e+07  8.33798e+07  9.16664e+07  8.92498e+07  -5.008e+05  -0.561         0.018
+redis:keys                       100  4438         4421         4062         4583         4421.07      -49.44      -1.118         0.049
+redis:connected_clients          100  459          415          415          459          432.13       -34.28      -7.932         0.842
+deploy-redis-1:mem_bytes         100  1.04197e+08  1.04082e+08  9.91009e+07  1.08737e+08  1.03446e+08  -9.066e+05  -0.876         0.077
+deploy-nginx-1:mem_bytes         100  2.40963e+08  2.41277e+08  2.40753e+08  2.41802e+08  2.41179e+08  3.987e+05   0.165          0.460
+exit 0

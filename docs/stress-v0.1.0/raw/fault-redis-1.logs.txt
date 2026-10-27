@@ -1,0 +1,5 @@
+## nginx error log, by level and message (first 60 chars)
+## deploy-app-1-1: WARN/ERROR lines, by message
+     71 rebound: stream vanished while running
+## deploy-app-2-1: WARN/ERROR lines, by message
+     67 rebound: stream vanished while running

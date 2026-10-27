@@ -1,0 +1,48 @@
+## docker logs deploy-app-2-1 --since 2026-10-26T23:13:49Z --until 2026-10-26T23:14:08Z: shutdown, stream endings and refused starts
+{"time":"2026-10-26T23:13:50.501130265Z","level":"INFO","msg":"chat: shutting down","instance":"app-2"}
+{"time":"2026-10-26T23:14:01.362022295Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"gioBXGe4nrC8zpcX9S0G-g","reason":"done","duration_ms":32222}
+{"time":"2026-10-26T23:14:01.403788289Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"PIqyKaDWUMKM6ic0wbvpow","reason":"done","duration_ms":32216}
+{"time":"2026-10-26T23:14:01.422641922Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:14:01.455384499Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"qwaI-I_rMn42n3qocl2IGQ","reason":"done","duration_ms":32268}
+{"time":"2026-10-26T23:14:01.465696234Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:14:01.471864138Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"Ux9JyotO5yqMVJY-kLcXUQ","reason":"done","duration_ms":32247}
+{"time":"2026-10-26T23:14:01.478269214Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"l_IkBiuW20Ei1s3dyfAtyw","reason":"done","duration_ms":32254}
+{"time":"2026-10-26T23:14:01.478307419Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"6mEzMQqPpmBMJcwXwRax6A","reason":"done","duration_ms":32178}
+{"time":"2026-10-26T23:14:01.478460978Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"VGCAAV-bxMPbVaWNP4NqqQ","reason":"done","duration_ms":32339}
+{"time":"2026-10-26T23:14:01.478487429Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"uIgb19jSKr2lJmTnxPbQkQ","reason":"done","duration_ms":32354}
+{"time":"2026-10-26T23:14:01.47869821Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"Xf_Sm_WVRZO4PtpKb4TVGA","reason":"done","duration_ms":32220}
+{"time":"2026-10-26T23:14:01.492156905Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"1BVy8C34ZgmrhPIaI7LUwA","reason":"done","duration_ms":32295}
+{"time":"2026-10-26T23:14:01.492333644Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"Geze5JV4VaD2Dzwy1-rmvw","reason":"done","duration_ms":32155}
+{"time":"2026-10-26T23:14:01.499199303Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"d02ojbPq1kcVUIkJ4SFpGw","reason":"done","duration_ms":32311}
+{"time":"2026-10-26T23:14:01.500274056Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"cpo7D1LCmUZ-V8ALOYI8Rw","reason":"done","duration_ms":32117}
+{"time":"2026-10-26T23:14:01.516891638Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"87FBT3AHp4nHQnTscD8wbw","reason":"done","duration_ms":32264}
+{"time":"2026-10-26T23:14:01.529860375Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"050XyN4uW4lTKEoMGIdh6g","reason":"done","duration_ms":32150}
+{"time":"2026-10-26T23:14:01.540421164Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:14:01.542459836Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"3ksbivvo92sRGgOODkCpnA","reason":"done","duration_ms":32221}
+{"time":"2026-10-26T23:14:01.54251323Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"Zy31QJvTn66244tjRgl2YA","reason":"done","duration_ms":32181}
+{"time":"2026-10-26T23:14:01.544619723Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"SMtpBUpIlSSNdjR0aQDMzg","reason":"done","duration_ms":32302}
+{"time":"2026-10-26T23:14:01.547229802Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"rki6XnZWiuHey7fZ7zHdIw","reason":"done","duration_ms":32294}
+{"time":"2026-10-26T23:14:01.547498781Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"HzbIBP-VUF2z7UeTt6hUHA","reason":"done","duration_ms":32357}
+{"time":"2026-10-26T23:14:01.547680725Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"W7tv5OHE9o9pLPp8RY2XDg","reason":"done","duration_ms":32224}
+{"time":"2026-10-26T23:14:01.558185687Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"q269QAwhe8755JL928k7iw","reason":"done","duration_ms":32200}
+{"time":"2026-10-26T23:14:01.569020712Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"YaViyszRMriGJSMnl5XM8w","reason":"done","duration_ms":32283}
+{"time":"2026-10-26T23:14:01.569432514Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"pusS0P8HdHHAXE6Xjcr1ng","reason":"done","duration_ms":32230}
+{"time":"2026-10-26T23:14:01.569431201Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"LKzcqcJeyj8LLr4C3W2gqw","reason":"done","duration_ms":32248}
+{"time":"2026-10-26T23:14:01.569486629Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"hVroSrqRn5yPuOnjPo7kFw","reason":"done","duration_ms":32190}
+{"time":"2026-10-26T23:14:01.586699032Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"79HYd2kqsO83hIrTsmrBCQ","reason":"done","duration_ms":32250}
+{"time":"2026-10-26T23:14:01.587284236Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"fLKFL3l0l8ANVi4FvElCTQ","reason":"done","duration_ms":32219}
+{"time":"2026-10-26T23:14:01.614502427Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"6wIr6AWyOMbpvOuJkzWdDQ","reason":"done","duration_ms":32282}
+{"time":"2026-10-26T23:14:01.619500027Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"7SGIVu2EdKff8oGfFQ_T3g","reason":"done","duration_ms":32247}
+{"time":"2026-10-26T23:14:01.62390665Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"zZDTnjzO3ndRaAvXU4svGA","reason":"done","duration_ms":32234}
+{"time":"2026-10-26T23:14:01.625079775Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"ZkO5eq_utRkwcUB4v6bknA","reason":"done","duration_ms":32301}
+{"time":"2026-10-26T23:14:01.625167336Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"ajJNMJAFIV-COsE00iMTgw","reason":"done","duration_ms":32304}
+{"time":"2026-10-26T23:14:01.625194729Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"AHXeA3c2Y3F2ejQhGDQfFA","reason":"done","duration_ms":32265}
+{"time":"2026-10-26T23:14:01.625289193Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"sMDhLNJ8lVY8koXqCQHYgg","reason":"done","duration_ms":32325}
+{"time":"2026-10-26T23:14:01.626131393Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:14:01.652624006Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:14:01.66481923Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"bof4062_jUmCeLvx1Y_qDQ","reason":"done","duration_ms":32343}
+{"time":"2026-10-26T23:14:01.707552613Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:14:01.713582223Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"nRJvnFG4wA-JpfqzRB8T1g","reason":"done","duration_ms":32325}
+{"time":"2026-10-26T23:14:01.715068403Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"lLxnr2j-RkJbiL0ryE6uzQ","reason":"done","duration_ms":32327}
+{"time":"2026-10-26T23:14:01.715232593Z","level":"INFO","msg":"rebound: hub closed","instance":"app-2"}
+{"time":"2026-10-26T23:14:06.720323199Z","level":"ERROR","msg":"chat: exiting","instance":"app-2","error":"chat: shutdown: context deadline exceeded"}

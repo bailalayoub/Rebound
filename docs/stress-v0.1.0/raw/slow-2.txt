@@ -1,0 +1,4 @@
+seed 2113317312323923761, timer 10ms: 10.35 ms before, 10.34 ms after, unfinished 0, passed true
+phase      streams  start err  readers  conns  ev/s  ttfe p50/p95/p99 ms  start p50/p99  connect p50/p99  lat p50/p95/p99 ms  http errors  integrity  terminals  pass
+75x1-3@4m  825      0          1660     1660   2723  7.9/186.6/220.2      2.4/80.7       3.8/121.6        2.3/34.6/117.4      -            -          done=825   true
+slow       6        0          6        12     0     0.0/0.0/0.0          0.0/0.0        0.0/0.0          0.0/0.0/0.0         -            -          done=6     true

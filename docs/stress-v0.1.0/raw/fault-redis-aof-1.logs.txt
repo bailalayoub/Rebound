@@ -1,0 +1,7 @@
+## nginx error log, by level and message (first 60 chars)
+## deploy-app-1-1: WARN/ERROR lines, by message
+     23 rebound: store append failed; retrying
+     20 rebound: heartbeat touch
+## deploy-app-2-1: WARN/ERROR lines, by message
+     38 rebound: heartbeat touch
+     26 rebound: store append failed; retrying

@@ -1,0 +1,5 @@
+deploy-app-1-1 172.20.0.3/16
+deploy-app-2-1 172.20.0.4/16
+deploy-nginx-1 172.20.0.5/16
+deploy-redis-1 172.20.0.2/16
+

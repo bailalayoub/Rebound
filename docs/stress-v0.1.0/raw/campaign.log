@@ -1,0 +1,75 @@
+2026-10-26T17:43:11Z ramp-1: rebound-load run -phases 50x1-3@3m,200x1-3@3m,500x1-3@3m,1000x1-3@3m,2000x1-3@3m -audit 0.05 -window 10s
+2026-10-26T17:44:14Z ramp-1: exit 137
+2026-10-26T17:45:36Z ramp-1: rebound-load run -phases 50x1-3@3m,200x1-3@3m,500x1-3@3m,1000x1-3@3m,2000x1-3@3m -audit 0.05 -window 10s
+2026-10-26T18:01:46Z ramp-1: exit 1
+2026-10-26T18:44:19Z ramp-tuned-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T18:44:19Z ramp-tuned-1: rebound-load run -phases 50x1-3@3m,200x1-3@3m,500x1-3@3m,1000x1-3@3m,2000x1-3@3m -audit 0.05 -window 10s
+2026-10-26T19:01:04Z ramp-tuned-1: exit 1
+2026-10-26T19:03:02Z ramp-fine-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T19:03:02Z ramp-fine-1: rebound-load run -phases 50x1-3@3m,100x1-3@3m,150x1-3@3m,200x1-3@3m,300x1-3@3m -audit 0.05 -window 10s
+2026-10-26T19:18:31Z ramp-fine-1: exit 0
+2026-10-26T19:18:58Z ramp-fine-2: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T19:18:58Z ramp-fine-2: rebound-load run -phases 50x1-3@3m,100x1-3@3m,150x1-3@3m,200x1-3@3m,300x1-3@3m -audit 0.05 -window 10s
+2026-10-26T19:34:26Z ramp-fine-2: exit 0
+2026-10-26T19:34:55Z baseline-1: nginx no nginx
+2026-10-26T19:34:55Z baseline-1: rebound-load run -phases 50x1-3@3m,200x1-3@3m,500x1-3@3m,1000x1-3@3m,2000x1-3@3m -audit 0.05 -window 10s
+2026-10-26T19:50:21Z baseline-1: exit 0
+2026-10-26T19:51:33Z ramp-shipped-fine-1: nginx events {} (as shipped: 1 worker, 512 connections)
+2026-10-26T19:51:33Z ramp-shipped-fine-1: rebound-load run -phases 50x1-3@3m,100x1-3@3m,150x1-3@3m -audit 0.05 -window 10s
+2026-10-26T20:00:49Z ramp-shipped-fine-1: exit 0
+2026-10-26T20:11:29Z soak: idle baseline, 3 minutes
+2026-10-26T20:14:31Z soak-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T20:14:31Z soak-1: rebound-load run -phases 75x1-3@2h -drop conn:0.3 -audit 0.02 -window 60s
+2026-10-26T22:14:55Z soak-1: exit 0
+2026-10-26T22:14:55Z soak: idle after the load, 15 minutes
+2026-10-26T22:31:24Z spike-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T22:31:24Z spike-1: rebound-load run -phases 75x1-3@3m,0x1@1m,375x1-3~10s@2m,75x1-3@5m -audit 0.05 -window 5s
+2026-10-26T22:42:42Z spike-1: exit 0
+2026-10-26T22:44:03Z storm-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T22:44:03Z storm-1: rebound-load run -phases 20x3@1m -events 3000 -delay-ms 10 -drop every:1-5 -audit 1 -window 5s
+2026-10-26T22:45:57Z storm-1: exit 0
+2026-10-26T22:46:15Z storm-2: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T22:46:15Z storm-2: rebound-load run -phases 20x3@1m -events 3000 -delay-ms 10 -drop every:1-5 -audit 1 -window 5s
+2026-10-26T22:48:15Z storm-2: exit 0
+2026-10-26T22:48:30Z storm-ms-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T22:48:30Z storm-ms-1: rebound-load run -phases 20x3@1m -events 3000 -delay-ms 10 -drop ms:5-50 -audit 1 -window 5s
+2026-10-26T22:49:42Z storm-ms-1: exit 0
+2026-10-26T22:50:18Z fault-redis-pause-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T22:50:18Z fault-redis-pause-1: rebound-load run -phases 75x1-3@4m -events 600 -delay-ms 50 -audit 1 -window 5s -slack 3m
+2026-10-26T22:54:44Z fault-redis-pause-1: exit 0
+2026-10-26T22:55:12Z fault-redis-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T22:55:12Z fault-redis-1: rebound-load run -phases 75x1-3@4m -events 600 -delay-ms 50 -audit 1 -window 5s -slack 3m
+2026-10-26T22:59:24Z fault-redis-1: exit 1
+2026-10-26T23:00:26Z fault-redis-aof-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:00:26Z fault-redis-aof-1: rebound-load run -phases 75x1-3@4m -events 600 -delay-ms 50 -audit 1 -window 5s -slack 3m
+2026-10-26T23:04:43Z fault-redis-aof-1: exit 0
+2026-10-26T23:05:55Z fault-kill-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:05:55Z fault-kill-1: rebound-load run -phases 75x1-3@4m -events 600 -delay-ms 50 -audit 1 -window 5s -slack 3m
+2026-10-26T23:10:26Z fault-kill-1: exit 0
+2026-10-26T23:12:54Z fault-stop-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:12:54Z fault-stop-1: rebound-load run -phases 75x1-3@4m -events 600 -delay-ms 50 -audit 1 -window 5s -slack 3m
+2026-10-26T23:17:16Z fault-stop-1: exit 0
+2026-10-26T23:18:21Z fault-stop-long-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:18:21Z fault-stop-long-1: rebound-load run -phases 75x1-3@4m -events 1500 -delay-ms 50 -audit 1 -window 5s -slack 3m
+2026-10-26T23:22:27Z fault-stop-long-1: exit 0
+2026-10-26T23:22:41Z fault-stop-grace10-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:22:41Z fault-stop-grace10-1: rebound-load run -phases 75x1-3@4m -events 600 -delay-ms 50 -audit 1 -window 5s -slack 3m
+2026-10-26T23:27:03Z fault-stop-grace10-1: exit 0
+2026-10-26T23:27:44Z fault-stop-long-2: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:27:44Z fault-stop-long-2: rebound-load run -phases 75x1-3@4m -events 3000 -delay-ms 50 -audit 1 -window 5s -slack 3m
+2026-10-26T23:33:07Z fault-stop-long-2: exit 0
+2026-10-26T23:34:15Z slow-control-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:34:15Z slow-control-1: rebound-load run -phases 75x1-3@4m -audit 0.05 -window 10s
+2026-10-26T23:38:26Z slow-control-1: exit 0
+2026-10-26T23:38:38Z slow-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:38:38Z slow-1: rebound-load run -phases 75x1-3@4m -slow-streams 6 -slow-events 1500 -slow-size 32768 -slow-delay-ms 5 -slow-after 10 -slow-pause 60s -audit 0.05 -window 10s
+2026-10-26T23:42:51Z slow-1: exit 0
+2026-10-26T23:44:54Z slow-2: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:44:54Z slow-2: rebound-load run -phases 75x1-3@4m -slow-streams 6 -slow-events 1500 -slow-size 32768 -slow-delay-ms 5 -slow-after 10 -slow-pause 60s -audit 0.05 -window 10s
+2026-10-26T23:48:59Z slow-2: exit 0
+2026-10-26T23:49:58Z slow-heavy-control-1: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:49:58Z slow-heavy-control-1: rebound-load run -phases 75x1-3@4m -slow-streams 6 -slow-events 1500 -slow-size 32768 -slow-delay-ms 5 -slow-after 1000000 -slow-pause 60s -audit 0.05 -window 10s
+2026-10-26T23:54:17Z slow-heavy-control-1: exit 0
+2026-10-26T23:55:33Z slow-3: nginx worker_processes auto;   worker_connections 65536;
+2026-10-26T23:55:33Z slow-3: rebound-load run -phases 75x1-3@4m -slow-streams 6 -slow-events 1500 -slow-size 32768 -slow-delay-ms 5 -slow-after 10 -slow-pause 60s -audit 0.05 -window 10s
+2026-10-26T23:59:39Z slow-3: exit 0

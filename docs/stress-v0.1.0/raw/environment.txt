@@ -1,0 +1,17 @@
+## captured 2026-10-26T17:40:35Z
+### host
+AMD Ryzen 5 4600H with Radeon Graphics         
+logical CPUs: 12
+RAM GB: 15,4
+Microsoft Windows 10 Professionnel 10.0.19045
+### docker
+client 28.4.0, server 28.4.0
+VM: 12 CPUs, 7997685760 bytes RAM, kernel 5.15.153.1-microsoft-standard-WSL2, Docker Desktop
+Docker Compose version v2.39.4-desktop.1
+### go
+go version go1.26.0 windows/amd64
+go version go1.26.9 linux/amd64
+### images
+Redis server v=7.4.8 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=dc3fdca8addf42ba
+nginx version: nginx/1.28.3
+rebound-chat:dev sha256:32a092d70321fb9975b95ccdc8954ca450c01a34dd4531db4122eb6444af5c79 built 2026-10-26T17:39:07.421765608Z

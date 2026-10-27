@@ -1,0 +1,7 @@
+2026-10-26T23:55:14Z
+3474
+used_memory_human:768.87M
+lazyfree_pending_objects:0
+$ docker exec deploy-redis-1 redis-cli FLUSHALL
+OK
+0

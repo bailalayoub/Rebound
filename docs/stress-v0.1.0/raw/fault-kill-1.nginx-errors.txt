@@ -1,0 +1,9 @@
+## docker logs deploy-nginx-1 --since 2026-10-26T23:05:56Z --until 2026-10-26T23:10:27Z | grep error, by 10-second bucket, method and message
+      2 23:06:5x GET connect() failed (104: Connection reset by peer)
+      9 23:06:5x GET connect() failed (111: Connection refused)
+      5 23:06:5x GET recv() failed (104: Connection reset by peer)
+     75 23:06:5x GET upstream prematurely closed connection
+     27 23:07:4x GET connect() failed (113: Host is unreachable)
+     17 23:07:4x POST connect() failed (113: Host is unreachable)
+      1 23:07:5x GET connect() failed (111: Connection refused)
+      5 23:07:5x POST connect() failed (111: Connection refused)

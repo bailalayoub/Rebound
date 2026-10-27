@@ -1,0 +1,15 @@
+## docker logs deploy-app-2-1 --since 2026-10-26T23:23:36Z --until 2026-10-26T23:23:49Z: shutdown, stream endings, refused starts
+{"time":"2026-10-26T23:23:37.350265319Z","level":"INFO","msg":"chat: shutting down","instance":"app-2"}
+{"time":"2026-10-26T23:23:47.114330864Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"VMW8XH7WG1nulg2cFK3X0g","reason":"done","duration_ms":32339}
+{"time":"2026-10-26T23:23:47.137903848Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"7FPnst36z-_JMNhcprspcg","reason":"done","duration_ms":32341}
+{"time":"2026-10-26T23:23:47.18003412Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"sfWDDqLV5E4V6dxQw03F_w","reason":"done","duration_ms":32354}
+{"time":"2026-10-26T23:23:47.21045836Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"5Ch08-IY61A3-pAcgapZKw","reason":"done","duration_ms":32226}
+{"time":"2026-10-26T23:23:47.241228591Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:23:47.269779571Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"IHbGZeFMWkoaHNMUF0X7Ig","reason":"done","duration_ms":32264}
+{"time":"2026-10-26T23:23:47.278560107Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:23:47.300390509Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}
+{"time":"2026-10-26T23:23:47.307604852Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"Zwep5pbdAObhep1e7_bJgg","reason":"done","duration_ms":32264}
+{"time":"2026-10-26T23:23:47.315291182Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"dgzzZ6P2YbanOciFHDzIug","reason":"done","duration_ms":32256}
+{"time":"2026-10-26T23:23:47.319745792Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"rYSgQ9OGd5QZKmIzpng6Qg","reason":"done","duration_ms":32246}
+{"time":"2026-10-26T23:23:47.33764971Z","level":"INFO","msg":"rebound: stream ended","instance":"app-2","stream_id":"G0DMrNlA24u9OR5Cev3T3g","reason":"done","duration_ms":32211}
+{"time":"2026-10-26T23:23:47.360680955Z","level":"INFO","msg":"request","instance":"app-2","method":"POST","path":"/loadtest/streams","status":503,"last_event_id":"","duration_ms":0}

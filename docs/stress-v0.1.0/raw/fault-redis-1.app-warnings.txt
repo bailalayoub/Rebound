@@ -1,0 +1,8 @@
+## WARN/ERROR lines of both instances from 2026-10-26T22:55:12Z to 2026-10-26T22:59:25Z, by message (stream ids and the error detail removed)
+## docker logs deploy-app-N-1 --since 2026-10-26T22:55:12Z --until 2026-10-26T22:59:25Z | grep -E 'WARN|ERROR'
+### deploy-app-1-1
+     75 httpx: stream read failed; closing the response
+     71 rebound: stream vanished while running
+### deploy-app-2-1
+     76 httpx: stream read failed; closing the response
+     67 rebound: stream vanished while running

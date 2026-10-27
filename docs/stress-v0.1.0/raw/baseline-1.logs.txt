@@ -1,0 +1,1 @@
+## rebound-solo: WARN/ERROR lines, by message

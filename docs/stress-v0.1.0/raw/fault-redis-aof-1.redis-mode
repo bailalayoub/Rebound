@@ -1,0 +1,7 @@
+$ docker exec deploy-redis-1 redis-cli CONFIG GET appendonly / appendfsync / save
+appendonly
+yes
+appendfsync
+always
+save
+

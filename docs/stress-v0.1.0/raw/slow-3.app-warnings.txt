@@ -1,0 +1,6 @@
+## WARN/ERROR lines of both instances from 2026-10-26T23:55:34Z to 2026-10-26T23:59:40Z, by message (stream ids and the error detail removed)
+## docker logs deploy-app-N-1 --since 2026-10-26T23:55:34Z --until 2026-10-26T23:59:40Z | grep -E 'WARN|ERROR'
+### deploy-app-1-1
+      5 httpx: write timeout; closing the response
+### deploy-app-2-1
+      1 httpx: write timeout; closing the response
