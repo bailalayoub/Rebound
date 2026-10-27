@@ -300,4 +300,7 @@ func TestRun_SlowReaderIsReleasedAndResumes(t *testing.T) {
 	assert.Empty(t, rep.Slow.Integrity)
 	assert.Equal(t, 1, rep.Slow.Terminals["done"])
 	assert.True(t, rep.Passed)
+	for i := range rep.Windows {
+		assert.Zero(t, rep.Windows[i].Events, "a slow reader's events stay out of the windows")
+	}
 }

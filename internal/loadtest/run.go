@@ -318,13 +318,19 @@ func (d *driver) stream(ctx context.Context, ps *phaseStats, rng *mrand.Rand, re
 	if slow != nil {
 		deadline = deadline.Add(slow.Pause)
 	}
+	// A slow reader receives its events up to a pause late: recorded in the windows, they would be
+	// counted in the latency of the normal streams. Its outcome is in the slow phase instead.
+	stats := d.rec
+	if slow != nil {
+		stats = nil
+	}
 	rds := make([]*reader, readers)
 	var wg sync.WaitGroup
 	for k := range rds {
 		rds[k] = &reader{
 			client: d.cfg.Client, baseURL: d.cfg.BaseURL, id: id, events: req.Events,
 			drop: d.cfg.Drop, slow: slow, rng: mrand.New(mrand.NewPCG(rng.Uint64(), uint64(k))), //nolint:gosec // small index
-			deadline: deadline, maxConns: d.cfg.MaxConns, stats: d.rec, started: sent, keepLogs: true,
+			deadline: deadline, maxConns: d.cfg.MaxConns, stats: stats, started: sent, keepLogs: true,
 		}
 		wg.Go(func() { rds[k].run(ctx) })
 	}
