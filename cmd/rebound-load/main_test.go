@@ -139,3 +139,38 @@ func TestAnalyzeAndChart(t *testing.T) {
 	code, _, _ = runCLI(t, "analyze", "-in", in, "-series", "bad")
 	assert.Equal(t, 2, code)
 }
+
+func TestSteps(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	start := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	rep := loadtest.Report{Started: start, Phases: []loadtest.PhaseReport{
+		{Name: "a", From: 0, To: 60}, {Name: "b", From: 60, To: 120}, {Name: "c", From: 120, To: 180},
+	}}
+	data, err := json.Marshal(rep)
+	require.NoError(t, err)
+	reportPath := filepath.Join(dir, "r.json")
+	require.NoError(t, os.WriteFile(reportPath, data, 0o600))
+	var b strings.Builder
+	b.WriteString("unix_s,source,metric,value\n")
+	for s := 0; s < 120; s += 10 {
+		v := 10
+		if s >= 60 {
+			v = 30 + s // phase b: 100..140
+		}
+		fmt.Fprintf(&b, "%d,app,cpu_pct,%d\n", start.Unix()+int64(s), v)
+	}
+	in := filepath.Join(dir, "s.csv")
+	require.NoError(t, os.WriteFile(in, []byte(b.String()), 0o600))
+
+	code, stdout, stderr := runCLI(t, "steps", "-report", reportPath, "-in", in, "-settle", "15s",
+		"-columns", "cpu=app:cpu_pct:mean,peak=app:cpu_pct:max,half=app:cpu_pct:max*0.5")
+	require.Equal(t, 0, code, stderr)
+	assert.Contains(t, stdout, "| phase | cpu | peak | half |")
+	assert.Contains(t, stdout, "| a | 10 | 10 | 5 |", "samples at 20-50 s of phase a")
+	assert.Contains(t, stdout, "| b | 125 | 140 | 70 |", "samples at 80-110 s, after the settling delay")
+	assert.Contains(t, stdout, "| c | – | – | – |", "no samples in phase c")
+
+	code, _, _ = runCLI(t, "steps", "-report", reportPath, "-in", in, "-columns", "x=app:cpu_pct:median")
+	assert.Equal(t, 2, code)
+}

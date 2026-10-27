@@ -7,6 +7,7 @@
 //	rebound-load host-sample -containers deploy-app-1-1,deploy-redis-1 -redis deploy-redis-1 -out host.csv
 //	rebound-load analyze -in app-1.csv,host.csv -series app-1:rss_bytes -from 10m
 //	rebound-load chart -in app-1.csv -series app-1:rss_bytes -unit MiB -scale 9.5367431640625e-07 -out rss.svg
+//	rebound-load steps -report ramp.json -in host.csv -columns "redis CPU=deploy-redis-1:cpu_pct:mean"
 //
 // run exits 0 when every phase passes, 1 when one fails, 2 on invalid usage or setup errors.
 package main
@@ -36,6 +37,7 @@ var commands = map[string]func(ctx context.Context, args []string, stdout, stder
 	"host-sample": cmdHostSample,
 	"analyze":     cmdAnalyze,
 	"chart":       cmdChart,
+	"steps":       cmdSteps,
 }
 
 // errFailed means the command ran and the result is a failure (exit code 1).
@@ -43,7 +45,7 @@ var errFailed = errors.New("rebound-load: failed")
 
 func run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 	if len(args) == 0 || commands[args[0]] == nil {
-		diag(stderr, "usage: rebound-load run|sample|host-sample|analyze|chart [flags] (-h for flags)")
+		diag(stderr, "usage: rebound-load run|sample|host-sample|analyze|chart|steps [flags] (-h for flags)")
 		return 2
 	}
 	err := commands[args[0]](ctx, args[1:], stdout, stderr)
