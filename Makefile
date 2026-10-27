@@ -11,7 +11,7 @@ GOVULNCHECK_VERSION ?= v1.8.0
 
 .PHONY: help tidy fmt fmt-check vet lint test test-race test-integration cover check \
         no-sleep-check conformance conformance-redis client-build client-test demo demo-redis \
-        readme-check tools ci playground playground-down
+        readme-check tools ci playground playground-down         stress-up stress-down load load-baseline soak spike storm faults slow
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-20s\033[0m %s\n",$$1,$$2}'
@@ -100,3 +100,39 @@ readme-check: ## The README quick start is examples/readme-check/main.go, and it
 	@awk '/<!-- quickstart:start -->/{f=1;next} /<!-- quickstart:end -->/{f=0} f' README.md | sed '1d;$$d' 		| diff -u - examples/readme-check/main.go || (echo "README quick start differs from examples/readme-check/main.go"; exit 1)
 	@# Follow the README in a module outside this one; the replace stands in for the published module.
 	@tmp=$$(mktemp -d) && trap 'rm -rf "$$tmp"' EXIT && cp examples/readme-check/main.go "$$tmp/" && cd "$$tmp" 		&& $(GO) mod init example.com/chat >/dev/null 2>&1 		&& $(GO) mod edit -require=github.com/bailalayoub/rebound@v0.0.0 -replace=github.com/bailalayoub/rebound=$(CURDIR) 		&& $(GO) mod tidy >/dev/null 2>&1 		&& $(GO) build -o /dev/null . && echo "readme-check: OK (fresh module: go mod tidy, go build)"
+
+# Stress campaign (docs/STRESS-v0.1.0.md): never part of check or ci. Each target runs
+# cmd/rebound-load in a container against the deploy/ stack and keeps its outputs under
+# docs/stress-v0.1.0/raw. The harness is built without -race: these are throughput measurements.
+STRESS := ./scripts/stress/run.sh
+
+stress-up: ## Stress: start deploy/ with the stress overlay (CPU pinning, DEBUG_ADDR)
+	$(STRESS) up
+
+stress-down: ## Stress: stop it
+	$(STRESS) down
+
+load: ## Stress test 1: ramp 50-2000 streams through nginx (NAME=ramp-1)
+	$(STRESS) ramp $(or $(NAME),ramp)
+
+load-baseline: ## Stress test 1: the same ramp on one instance with the memory store
+	$(STRESS) baseline $(or $(NAME),baseline)
+
+soak: ## Stress test 2: 2 h at STREAMS streams with 30 % connection drops
+	STREAMS=$(STREAMS) $(STRESS) soak $(or $(NAME),soak)
+
+spike: ## Stress test 3: idle to 5x STREAMS in 10 s, then back
+	STREAMS=$(STREAMS) $(STRESS) spike $(or $(NAME),spike)
+
+storm: ## Stress test 4: readers reconnecting every 1-5 events (DROP=ms:5-50 for the timed variant)
+	$(STRESS) storm $(or $(NAME),storm)
+
+faults: ## Stress test 5: Redis restart and pause, kill app-1, graceful stop of app-2, under load
+	$(STRESS) fault-redis
+	$(STRESS) fault-redis-pause
+	$(STRESS) fault-kill
+	$(STRESS) fault-stop
+
+slow: ## Stress test 6: readers that stop reading, next to a normal load, and its control run
+	$(STRESS) slow-control
+	$(STRESS) slow

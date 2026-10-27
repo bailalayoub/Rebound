@@ -13,6 +13,7 @@ users. It must stay small and readable; it is not a product.
 | `GET` | `/streams/:id` | `ginx.Stream` |
 | `POST` | `/streams/:id/cancel` | `ginx.Cancel` |
 | `POST` | `/conformance/streams` | deterministic producer (docs/06), only with `CONFORMANCE=1` |
+| `POST` | `/loadtest/streams` | timestamped producer of the stress harness (docs/STRESS-v0.1.0.md), only with `CONFORMANCE=1` |
 | `GET` | `/` | static UI (`web/index.html`, `web/app.js`, built client) |
 | `GET` | `/healthz` | `{"store":"memory|redis","instance":"<hostname>"}` |
 
@@ -28,7 +29,8 @@ users. It must stay small and readable; it is not a product.
 | `LLM_API_KEY`, `LLM_MODEL` | — | required with `openai` (startup fails with a readable message otherwise); the key is never logged or displayed |
 | `LLM_STREAM_USAGE` | `1` | `0` omits `stream_options.include_usage`, for providers that do not document it |
 | `INSTANCE_NAME` | hostname | shown in the UI so multi-instance demos are visible |
-| `CONFORMANCE` | off | `1` mounts the test-only `/conformance/streams`; set by `make conformance` and `deploy/` |
+| `CONFORMANCE` | off | `1` mounts the test-only `/conformance/streams` and `/loadtest/streams`; set by `make conformance` and `deploy/` |
+| `DEBUG_ADDR` | off | loopback address for expvar and pprof (`/debug/vars`, `/debug/pprof/`); a non-loopback address is refused |
 
 ### Structure
 

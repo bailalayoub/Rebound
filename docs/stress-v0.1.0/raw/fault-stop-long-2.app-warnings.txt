@@ -1,0 +1,7 @@
+## WARN/ERROR lines of both instances from 2026-10-26T23:27:45Z to 2026-10-26T23:33:08Z, by message (stream ids and the error detail removed)
+## docker logs deploy-app-N-1 --since 2026-10-26T23:27:45Z --until 2026-10-26T23:33:08Z | grep -E 'WARN|ERROR'
+### deploy-app-1-1
+### deploy-app-2-1
+      1 rebound: hub closed at deadline
+      1 chat: hub close
+      1 chat: exiting

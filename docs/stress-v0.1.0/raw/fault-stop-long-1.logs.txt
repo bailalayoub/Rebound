@@ -1,0 +1,6 @@
+## nginx error log, by level and message (first 60 chars)
+      8 error connect() failed (111: Connection refused) while connecting 
+      1 error upstream prematurely closed connection while reading upstrea
+## deploy-app-1-1: WARN/ERROR lines, by message
+## deploy-app-2-1: WARN/ERROR lines, by message
+      1 chat: exiting

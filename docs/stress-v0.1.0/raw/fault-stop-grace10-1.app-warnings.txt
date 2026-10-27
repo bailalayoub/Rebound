@@ -1,0 +1,5 @@
+## WARN/ERROR lines of both instances from 2026-10-26T23:22:42Z to 2026-10-26T23:27:04Z, by message (stream ids and the error detail removed)
+## docker logs deploy-app-N-1 --since 2026-10-26T23:22:42Z --until 2026-10-26T23:27:04Z | grep -E 'WARN|ERROR'
+### deploy-app-1-1
+     33 rebound: producer lost
+### deploy-app-2-1

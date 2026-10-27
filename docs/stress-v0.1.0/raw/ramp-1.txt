@@ -1,0 +1,7 @@
+seed 6924589979214193595, timer 10ms: 10.38 ms before, 10.33 ms after, unfinished 0, passed false
+phase        streams  start err  readers  conns   ev/s  ttfe p50/p95/p99 ms        lat p50/p95/p99 ms  http errors                                  integrity              terminals           pass
+50x1-3@3m    450      0          876      876     1872  12.7/84.9/159.4            2.5/8.8/29.4        -                                            -                      done=450            true
+200x1-3@3m   1174     9514       2357     26327   4720  81.8/33017.6/88046.8       9.7/102.8/199.2     get:transport=19416 start:transport=9500     missing_terminal=56    done=1148 none=26   false
+500x1-3@3m   1250     124868     2523     83891   4909  195.0/85899.3/114890.4     27.8/90.2/182.5     get:transport=66898 start:transport=124823   missing_terminal=251   done=1124 none=126  false
+1000x1-3@3m  1639     290920     3229     185540  5237  947.9/110595.4/135291.5    50.3/161.5/253.8    get:transport=152350 start:transport=290667  missing_terminal=817   done=1212 none=427  false
+2000x1-3@3m  1907     631832     3777     296902  5340  56371.4/126701.5/137439.0  161.5/461.4/729.8   get:transport=344265 start:transport=632144  missing_terminal=1035  done=1389 none=518  false

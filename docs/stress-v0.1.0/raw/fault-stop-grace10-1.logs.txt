@@ -1,0 +1,8 @@
+## nginx error log, by level and message (first 60 chars)
+     60 error upstream prematurely closed connection while reading upstrea
+     17 error recv() failed (104: Connection reset by peer) while reading 
+      2 error connect() failed (111: Connection refused) while connecting 
+      1 error upstream prematurely closed connection while reading respons
+## deploy-app-1-1: WARN/ERROR lines, by message
+     33 rebound: producer lost
+## deploy-app-2-1: WARN/ERROR lines, by message

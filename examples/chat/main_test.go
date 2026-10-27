@@ -66,6 +66,19 @@ func TestRouter(t *testing.T) {
 	code, _ = do(http.MethodPost, "/conformance/streams", `{"text":""}`)
 	assert.Equal(t, http.StatusBadRequest, code)
 
+	// The load harness's producer: one stamped payload per seq, written by this instance.
+	code, body = do(http.MethodPost, "/loadtest/streams", `{"events":2,"delay_ms":0}`)
+	require.Equal(t, http.StatusCreated, code, body)
+	require.NoError(t, json.Unmarshal([]byte(body), &created))
+	code, body = do(http.MethodGet, "/streams/"+created.StreamID, "")
+	require.Equal(t, http.StatusOK, code)
+	assert.Contains(t, body, `data: {"i":1,`)
+	assert.Contains(t, body, `data: {"i":2,`)
+	assert.Contains(t, body, `"h":"app-test"`)
+	assert.Contains(t, body, "id: 3\nevent: done\n")
+	code, _ = do(http.MethodPost, "/loadtest/streams", `{"events":0}`)
+	assert.Equal(t, http.StatusBadRequest, code)
+
 	// The chat: meta (instance and model) first, text chunks, usage, done.
 	code, body = do(http.MethodPost, "/chat", `{"message":"hello"}`)
 	require.Equal(t, http.StatusCreated, code, body)

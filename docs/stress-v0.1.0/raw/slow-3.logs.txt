@@ -1,0 +1,4 @@
+## nginx error log, by level and message (first 60 chars)
+      6 error upstream prematurely closed connection while sending to clie
+## deploy-app-1-1: WARN/ERROR lines, by message
+## deploy-app-2-1: WARN/ERROR lines, by message

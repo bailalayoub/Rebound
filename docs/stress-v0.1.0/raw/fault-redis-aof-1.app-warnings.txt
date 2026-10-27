@@ -1,0 +1,12 @@
+## WARN/ERROR lines of both instances from 2026-10-26T23:00:27Z to 2026-10-26T23:04:44Z, by message (stream ids and the error detail removed)
+## docker logs deploy-app-N-1 --since 2026-10-26T23:00:27Z --until 2026-10-26T23:04:44Z | grep -E 'WARN|ERROR'
+### deploy-app-1-1
+     65 httpx: stream read failed; closing the response
+     23 rebound: store append failed; retrying
+     20 rebound: heartbeat touch
+     14 httpx: store unavailable
+### deploy-app-2-1
+     73 httpx: stream read failed; closing the response
+     38 rebound: heartbeat touch
+     26 rebound: store append failed; retrying
+      1 httpx: store unavailable

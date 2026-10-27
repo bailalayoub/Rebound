@@ -17,8 +17,11 @@
 //
 //	FAKE_DELAY_MS   pause between words of the fake model (default 120)
 //	FAKE_REPEAT     times the fake model repeats its answer (default 2, about a minute)
-//	CONFORMANCE     1 mounts POST /conformance/streams, the test-only producer of the conformance
-//	                tester (docs/06); off by default: it lets anyone start large producers
+//	CONFORMANCE     1 mounts the test-only producers: POST /conformance/streams for the conformance
+//	                tester (docs/06) and POST /loadtest/streams for the load harness
+//	                (docs/STRESS-v0.1.0.md); off by default: they let anyone start large producers
+//	DEBUG_ADDR      a loopback address such as 127.0.0.1:6060 serves pprof and expvar
+//	                (/debug/pprof/, /debug/vars) for the load harness; off by default
 //
 // This is a demo: it has no authentication and no rate limit. Do not expose it to the internet as
 // is, least of all with LLM_PROVIDER=openai, which would let anyone spend your API credits.
@@ -48,6 +51,7 @@ import (
 	"github.com/bailalayoub/rebound/ginx"
 	"github.com/bailalayoub/rebound/httpx"
 	"github.com/bailalayoub/rebound/internal/conformance"
+	"github.com/bailalayoub/rebound/internal/loadtest"
 	"github.com/bailalayoub/rebound/store"
 	"github.com/bailalayoub/rebound/store/memory"
 	redisstore "github.com/bailalayoub/rebound/store/redis"
@@ -69,8 +73,10 @@ type config struct {
 	llmUsage   bool
 	fakeDelay  time.Duration
 	fakeRepeat int
-	// conformance mounts the test-only conformance endpoint (CONFORMANCE=1).
+	// conformance mounts the test-only producer endpoints (CONFORMANCE=1).
 	conformance bool
+	// debugAddr, when set, is the loopback address of the pprof and expvar listener.
+	debugAddr string
 }
 
 func loadConfig() config {
@@ -91,6 +97,7 @@ func loadConfig() config {
 		fakeDelay:   time.Duration(envInt("FAKE_DELAY_MS", 120)) * time.Millisecond,
 		fakeRepeat:  envInt("FAKE_REPEAT", 2),
 		conformance: os.Getenv("CONFORMANCE") == "1",
+		debugAddr:   strings.TrimSpace(os.Getenv("DEBUG_ADDR")),
 	}
 }
 
@@ -180,6 +187,20 @@ func run(cfg config, logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+	if cfg.debugAddr != "" {
+		debug, err := newDebugServer(cfg.debugAddr)
+		if err != nil {
+			return err
+		}
+		publishProcessVars()
+		go func() {
+			if err := debug.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+				logger.Warn("chat: debug listener", "error", err)
+			}
+		}()
+		defer func() { _ = debug.Close() }() // the process is exiting
+		logger.Info("chat: debug listener", "addr", cfg.debugAddr)
+	}
 	srv := &http.Server{
 		Addr:              ":" + cfg.port,
 		Handler:           handler,
@@ -266,9 +287,11 @@ func newRouter(hub *rebound.Hub, provider llm.Provider, cfg config, logger *slog
 	r.POST("/chat", chatHandler(hub, provider, cfg.instance, cfg.about()))
 	r.GET("/streams/:id", ginx.Stream(streams, "id"))
 	r.POST("/streams/:id/cancel", ginx.Cancel(streams, "id"))
-	// Test support, opt-in: the deterministic producer of the conformance contract (docs/06 §1).
+	// Test support, opt-in: the deterministic producer of the conformance contract (docs/06 §1),
+	// and the timestamped producer of the load harness.
 	if cfg.conformance {
 		r.POST("/conformance/streams", gin.WrapH(conformance.StartHandler(hub)))
+		r.POST("/loadtest/streams", gin.WrapH(loadtest.StartHandler(hub, cfg.instance)))
 	}
 
 	// The UI: index.html, app.js and the built @bailalayoub/rebound-client (web/vendor, see make

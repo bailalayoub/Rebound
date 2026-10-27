@@ -1,0 +1,5 @@
+$ docker inspect -f '{{.Name}} restarts={{.RestartCount}} started={{.State.StartedAt}}' ...  # 2026-10-26T22:44:35Z, after spike-1
+/deploy-app-1-1 restarts=0 started=2026-10-26T19:50:29.373542093Z
+/deploy-app-2-1 restarts=0 started=2026-10-26T19:50:29.399018565Z
+/deploy-redis-1 restarts=0 started=2026-10-26T19:50:26.452504615Z
+/deploy-nginx-1 restarts=0 started=2026-10-26T20:05:54.211407901Z

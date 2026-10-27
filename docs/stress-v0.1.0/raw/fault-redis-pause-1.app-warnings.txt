@@ -1,0 +1,4 @@
+## WARN/ERROR lines of both instances from 2026-10-26T22:50:19Z to 2026-10-26T22:54:45Z, by message (stream ids and the error detail removed)
+## docker logs deploy-app-N-1 --since 2026-10-26T22:50:19Z --until 2026-10-26T22:54:45Z | grep -E 'WARN|ERROR'
+### deploy-app-1-1
+### deploy-app-2-1

@@ -1,0 +1,6 @@
+2026-10-26T23:01:23.530Z docker stop -t 1 deploy-redis-1
+deploy-redis-1
+2026-10-26T23:01:24.410Z sleep 2
+2026-10-26T23:01:26.460Z docker start deploy-redis-1
+deploy-redis-1
+2026-10-26T23:01:27.240Z done

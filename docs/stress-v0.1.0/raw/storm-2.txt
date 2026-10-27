@@ -1,0 +1,3 @@
+seed 12734749305427153119, timer 10ms: 10.45 ms before, 10.35 ms after, unfinished 0, passed true
+phase    streams  start err  readers  conns   ev/s  ttfe p50/p95/p99 ms  start p50/p99  connect p50/p99  lat p50/p95/p99 ms  http errors  integrity  terminals  pass
+20x3@1m  40       0          120      120009  3111  62.9/115.3/144.4     8.3/31.3       18.1/78.6        16.0/39.8/68.2      -            -          done=40    true

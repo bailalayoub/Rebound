@@ -1,0 +1,10 @@
+# Stress overlay: nginx with the limits of scripts/stress/nginx-tuned.conf, so that the ramp
+# measures the instances and Redis rather than the proxy's default 512 connections.
+#   NGINX=tuned scripts/stress/run.sh up
+services:
+  nginx:
+    volumes: !override
+      # Relative to deploy/, the directory of the first compose file.
+      - ../scripts/stress/nginx-tuned.conf:/etc/nginx/nginx.conf:ro
+    ulimits:
+      nofile: 200000

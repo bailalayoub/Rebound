@@ -118,6 +118,22 @@ backend implements [`store.Store`](store/store.go) and proves itself with
 browser or Node 18+: `fetch`-based (custom headers), automatic resume with `Last-Event-ID`, backoff
 with jitter, never delivers an event twice, zero dependencies.
 
+## Performance
+
+Measured on one laptop (AMD Ryzen 5 4600H, 6 cores / 12 threads, 15.4 GB RAM, Docker Desktop on
+Windows 10), with the load generator on the same machine; streams of 20 events/s, 1–3 readers each.
+Method, raw outputs and every run: [docs/STRESS-v0.1.0.md](docs/STRESS-v0.1.0.md).
+
+| setup | knee (streams in flight) | delivered events/s at the knee | event latency p50 / p99 at the knee |
+|---|---|---|---|
+| two instances, one Redis 7.4, nginx (`deploy/`, nginx limits raised) | 150 | about 5 300 | 6.1 / 210 ms |
+| one instance, memory store | 1 000 | about 37 000 | 1.1 / 65.5 ms |
+
+On Redis the limit is Redis itself (one core). Below the knee, in 2 hours at 75 streams with 30 %
+of connections dropped, readers resuming through round-robin about 1 000 times each, Redis paused
+or restarted with an append-only file, an instance killed or stopped: no gap, no duplicate, and
+exactly one terminal per stream.
+
 ## Use it in your project
 
 ```sh

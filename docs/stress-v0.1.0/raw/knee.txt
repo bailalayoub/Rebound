@@ -1,0 +1,52 @@
+## ramp-1.json (seed 6924589979214193595, timer 10.38/10.332 ms)
+| step | streams in flight | readers/stream | ideal ev/s | delivered ev/s | efficiency | lat p99 ms | p99 vs previous | ttfe p99 ms | http errors | integrity | pass |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50x1-3@3m | 50 | 1.95 | 1947 | 1872 | 96% | 29.4 | - | 159.4 | 0 | 0 | True |
+| 200x1-3@3m | 200 | 2.01 | 8031 | 4720 | 59% | 199.2 | 6.8x | 88046.8 | 28916 | 56 | False |
+| 500x1-3@3m | 500 | 2.02 | 20184 | 4909 | 24% | 182.5 | 0.9x | 114890.4 | 191721 | 251 | False |
+| 1000x1-3@3m | 1000 | 1.97 | 39402 | 5237 | 13% | 253.8 | 1.4x | 135291.5 | 443017 | 817 | False |
+| 2000x1-3@3m | 2000 | 1.98 | 79224 | 5340 | 7% | 729.8 | 2.9x | 137439.0 | 976409 | 1035 | False |
+
+## ramp-tuned-1.json (seed 16704263678309209097, timer 10.352/10.314 ms)
+| step | streams in flight | readers/stream | ideal ev/s | delivered ev/s | efficiency | lat p99 ms | p99 vs previous | ttfe p99 ms | http errors | integrity | pass |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50x1-3@3m | 50 | 2.05 | 2051 | 1967 | 96% | 35.7 | - | 331.4 | 0 | 0 | True |
+| 200x1-3@3m | 200 | 2.01 | 8043 | 5766 | 72% | 245.4 | 6.9x | 377.5 | 0 | 0 | True |
+| 500x1-3@3m | 500 | 1.99 | 19938 | 6323 | 32% | 629.1 | 2.6x | 897.6 | 0 | 0 | True |
+| 1000x1-3@3m | 1000 | 1.99 | 39751 | 7310 | 18% | 1031.8 | 1.6x | 1560.3 | 0 | 586 | False |
+| 2000x1-3@3m | 2000 | 1.99 | 79653 | 8191 | 10% | 1560.3 | 1.5x | 2483.0 | 0 | 5899 | False |
+
+## ramp-fine-1.json (seed 16633884122395749537, timer 10.304/10.38 ms)
+| step | streams in flight | readers/stream | ideal ev/s | delivered ev/s | efficiency | lat p99 ms | p99 vs previous | ttfe p99 ms | http errors | integrity | pass |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50x1-3@3m | 50 | 2.03 | 2033 | 1951 | 96% | 32.0 | - | 133.2 | 0 | 0 | True |
+| 100x1-3@3m | 100 | 1.98 | 3969 | 3786 | 95% | 70.3 | 2.2x | 124.8 | 0 | 0 | True |
+| 150x1-3@3m | 150 | 1.98 | 5935 | 5323 | 90% | 209.7 | 3.0x | 94.4 | 0 | 0 | True |
+| 200x1-3@3m | 200 | 2.01 | 8058 | 6392 | 79% | 241.2 | 1.1x | 140.5 | 0 | 0 | True |
+| 300x1-3@3m | 300 | 1.99 | 11930 | 6730 | 56% | 293.6 | 1.2x | 377.5 | 0 | 0 | True |
+
+## ramp-fine-2.json (seed 3557509324931653763, timer 10.293/10.369 ms)
+| step | streams in flight | readers/stream | ideal ev/s | delivered ev/s | efficiency | lat p99 ms | p99 vs previous | ttfe p99 ms | http errors | integrity | pass |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50x1-3@3m | 50 | 1.99 | 1989 | 1924 | 97% | 34.1 | - | 105.9 | 0 | 0 | True |
+| 100x1-3@3m | 100 | 1.94 | 3876 | 3698 | 95% | 66.6 | 2.0x | 45.1 | 0 | 0 | True |
+| 150x1-3@3m | 150 | 1.99 | 5959 | 5345 | 90% | 209.7 | 3.1x | 180.4 | 0 | 0 | True |
+| 200x1-3@3m | 200 | 1.97 | 7881 | 6313 | 80% | 239.1 | 1.1x | 289.4 | 0 | 0 | True |
+| 300x1-3@3m | 300 | 2.01 | 12055 | 6802 | 56% | 289.4 | 1.2x | 373.3 | 0 | 0 | True |
+
+## ramp-shipped-fine-1.json (seed 10462415073506623565, timer 10.347/10.365 ms)
+| step | streams in flight | readers/stream | ideal ev/s | delivered ev/s | efficiency | lat p99 ms | p99 vs previous | ttfe p99 ms | http errors | integrity | pass |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50x1-3@3m | 50 | 1.97 | 1973 | 1908 | 97% | 22.0 | - | 255.9 | 0 | 0 | True |
+| 100x1-3@3m | 100 | 2.03 | 4060 | 3887 | 96% | 65.5 | 3.0x | 207.6 | 0 | 0 | True |
+| 150x1-3@3m | 150 | 2.01 | 6016 | 4867 | 81% | 129.0 | 2.0x | 52076.5 | 10379 | 0 | True |
+
+## baseline-1.json (seed 10221265061135356371, timer 10.351/10.383 ms)
+| step | streams in flight | readers/stream | ideal ev/s | delivered ev/s | efficiency | lat p99 ms | p99 vs previous | ttfe p99 ms | http errors | integrity | pass |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 50x1-3@3m | 50 | 2.05 | 2053 | 2028 | 99% | 1.6 | - | 207.6 | 0 | 0 | True |
+| 200x1-3@3m | 200 | 2.00 | 7989 | 7897 | 99% | 2.3 | 1.5x | 201.3 | 0 | 0 | True |
+| 500x1-3@3m | 500 | 2.00 | 20049 | 19738 | 98% | 8.5 | 3.7x | 211.8 | 0 | 0 | True |
+| 1000x1-3@3m | 1000 | 2.00 | 39993 | 37169 | 93% | 65.5 | 7.7x | 255.9 | 0 | 0 | True |
+| 2000x1-3@3m | 2000 | 1.98 | 79208 | 39868 | 50% | 5972.7 | 91.1x | 1375.7 | 0 | 0 | True |
+

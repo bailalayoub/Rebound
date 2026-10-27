@@ -1,0 +1,6 @@
+$ rebound-load analyze -in soak-1.deploy-app-1-1.csv,soak-1.deploy-app-2-1.csv,soak-1.host.csv -series deploy-app-1-1:rss_bytes,deploy-app-2-1:rss_bytes -from 63m -to 2h3m
+series                           n   first        last         min          max          mean         slope/h     slope %mean/h  R²
+deploy-app-1-1:rss_bytes         60  6.64494e+07  6.65354e+07  6.622e+07    6.66788e+07  6.657e+07    1.981e+05   0.298          0.135
+deploy-app-2-1:rss_bytes         60  6.6048e+07   6.62159e+07  6.56261e+07  6.6347e+07   6.60437e+07  1.994e+05   0.302          0.096
+deploy-app-1-1:heap_inuse_bytes  60  3.08265e+07  2.77299e+07  2.64684e+07  3.45948e+07  2.9338e+07   -1.161e+06  -3.957         0.032
+deploy-app-2-1:heap_inuse_bytes  60  3.1957e+07   2.87539e+07  2.72466e+07  3.59383e+07  3.11572e+07  -7.597e+04  -0.244         0.000

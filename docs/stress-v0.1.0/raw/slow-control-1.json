@@ -1,0 +1,1432 @@
+{
+  "base_url": "http://nginx:8080",
+  "seed": 11527563970054823985,
+  "started": "2026-10-26T23:34:16.247951857Z",
+  "stream": {
+    "events": 400,
+    "delay_ms": 50,
+    "size": 0
+  },
+  "drop": "none",
+  "audit_rate": 0.05,
+  "timer_10ms_before_ms": 10.308,
+  "timer_10ms_after_ms": 10.43,
+  "phases": [
+    {
+      "name": "75x1-3@4m",
+      "from_s": 0.103,
+      "to_s": 250.004,
+      "streams_started": 900,
+      "start_errors": 0,
+      "readers": 1787,
+      "conns": 1787,
+      "events_received": 714800,
+      "events_per_s": 2859.158,
+      "ttfe": {
+        "count": 1787,
+        "p50_ms": 10.748,
+        "p95_ms": 140.509,
+        "p99_ms": 150.995,
+        "max_ms": 232.573,
+        "mean_ms": 21.649
+      },
+      "start_latency": {
+        "count": 900,
+        "p50_ms": 3.047,
+        "p95_ms": 75.497,
+        "p99_ms": 82.838,
+        "max_ms": 135.14,
+        "mean_ms": 9.917
+      },
+      "connect_latency": {
+        "count": 1787,
+        "p50_ms": 5.046,
+        "p95_ms": 59.245,
+        "p99_ms": 63.963,
+        "max_ms": 141.969,
+        "mean_ms": 9.303
+      },
+      "latency": {
+        "count": 712937,
+        "p50_ms": 2.261,
+        "p95_ms": 8.913,
+        "p99_ms": 41.943,
+        "max_ms": 131.056,
+        "mean_ms": 3.695
+      },
+      "replay_latency": {
+        "count": 1863,
+        "p50_ms": 8.126,
+        "p95_ms": 125.829,
+        "p99_ms": 138.412,
+        "max_ms": 217.199,
+        "mean_ms": 19.559
+      },
+      "http_errors": {},
+      "conn_endings": {
+        "terminal": 1787
+      },
+      "integrity": {},
+      "terminals": {
+        "done": 900
+      },
+      "audited": 36,
+      "audit_unavailable": 0,
+      "producers": {
+        "app-1": 449,
+        "app-2": 451
+      },
+      "served_by_upstream": {
+        "app-1": {
+          "172.20.0.3:8080": 370,
+          "172.20.0.4:8080": 516
+        },
+        "app-2": {
+          "172.20.0.3:8080": 522,
+          "172.20.0.4:8080": 379
+        }
+      },
+      "passed": true
+    }
+  ],
+  "windows": [
+    {
+      "t_s": 10.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 25706,
+      "events_per_s": 2544.335,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 135,
+        "p50_ms": 140.509,
+        "p95_ms": 224.395,
+        "p99_ms": 232.573,
+        "max_ms": 232.573,
+        "mean_ms": 146.812
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 76.546,
+        "p95_ms": 133.169,
+        "p99_ms": 135.14,
+        "max_ms": 135.14,
+        "mean_ms": 81.599
+      },
+      "connect_latency": {
+        "count": 135,
+        "p50_ms": 60.293,
+        "p95_ms": 84.935,
+        "p99_ms": 93.323,
+        "max_ms": 141.969,
+        "mean_ms": 56.368
+      },
+      "latency": {
+        "count": 25470,
+        "p50_ms": 2.392,
+        "p95_ms": 14.418,
+        "p99_ms": 53.477,
+        "max_ms": 131.056,
+        "mean_ms": 4.357
+      },
+      "replay_latency": {
+        "count": 236,
+        "p50_ms": 82.838,
+        "p95_ms": 140.509,
+        "p99_ms": 153.092,
+        "max_ms": 217.199,
+        "mean_ms": 97.201
+      }
+    },
+    {
+      "t_s": 20.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 25900,
+      "events_per_s": 2590,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 25900,
+        "p50_ms": 2.294,
+        "p95_ms": 10.224,
+        "p99_ms": 33.292,
+        "max_ms": 74.444,
+        "mean_ms": 3.604
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 30.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 28728,
+      "events_per_s": 2872.8,
+      "conns": 135,
+      "resumes": 0,
+      "ttfe": {
+        "count": 152,
+        "p50_ms": 12.19,
+        "p95_ms": 17.039,
+        "p99_ms": 18.164,
+        "max_ms": 18.164,
+        "mean_ms": 11.696
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 3.244,
+        "p95_ms": 5.374,
+        "p99_ms": 7.13,
+        "max_ms": 7.13,
+        "mean_ms": 3.408
+      },
+      "connect_latency": {
+        "count": 152,
+        "p50_ms": 5.308,
+        "p95_ms": 8.389,
+        "p99_ms": 10.224,
+        "max_ms": 10.332,
+        "mean_ms": 5.414
+      },
+      "latency": {
+        "count": 28585,
+        "p50_ms": 2.261,
+        "p95_ms": 12.714,
+        "p99_ms": 59.245,
+        "max_ms": 127.252,
+        "mean_ms": 4.416
+      },
+      "replay_latency": {
+        "count": 143,
+        "p50_ms": 8.782,
+        "p95_ms": 12.583,
+        "p99_ms": 14.156,
+        "max_ms": 14.325,
+        "mean_ms": 8.417
+      },
+      "ended": {
+        "terminal": 135
+      }
+    },
+    {
+      "t_s": 40.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 29089,
+      "events_per_s": 2908.901,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 29089,
+        "p50_ms": 2.228,
+        "p95_ms": 12.19,
+        "p99_ms": 36.176,
+        "max_ms": 99.091,
+        "mean_ms": 3.912
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 50.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 28299,
+      "events_per_s": 2829.9,
+      "conns": 152,
+      "resumes": 0,
+      "ttfe": {
+        "count": 146,
+        "p50_ms": 11.141,
+        "p95_ms": 17.039,
+        "p99_ms": 18.35,
+        "max_ms": 18.98,
+        "mean_ms": 11.312
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 3.408,
+        "p95_ms": 4.981,
+        "p99_ms": 6.015,
+        "max_ms": 6.015,
+        "mean_ms": 3.409
+      },
+      "connect_latency": {
+        "count": 146,
+        "p50_ms": 5.243,
+        "p95_ms": 9.175,
+        "p99_ms": 9.568,
+        "max_ms": 10.747,
+        "mean_ms": 5.36
+      },
+      "latency": {
+        "count": 28155,
+        "p50_ms": 2.195,
+        "p95_ms": 11.141,
+        "p99_ms": 43.516,
+        "max_ms": 96.97,
+        "mean_ms": 3.907
+      },
+      "replay_latency": {
+        "count": 144,
+        "p50_ms": 8.192,
+        "p95_ms": 13.107,
+        "p99_ms": 14.549,
+        "max_ms": 15.218,
+        "mean_ms": 8.243
+      },
+      "ended": {
+        "terminal": 152
+      }
+    },
+    {
+      "t_s": 60.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 27939,
+      "events_per_s": 2793.9,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 27939,
+        "p50_ms": 2.294,
+        "p95_ms": 10.224,
+        "p99_ms": 48.759,
+        "max_ms": 96.916,
+        "mean_ms": 3.929
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 70.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 27906,
+      "events_per_s": 2790.593,
+      "conns": 146,
+      "resumes": 0,
+      "ttfe": {
+        "count": 145,
+        "p50_ms": 9.437,
+        "p95_ms": 18.612,
+        "p99_ms": 20.141,
+        "max_ms": 20.141,
+        "mean_ms": 10.296
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 2.818,
+        "p95_ms": 5.439,
+        "p99_ms": 5.988,
+        "max_ms": 5.988,
+        "mean_ms": 3.085
+      },
+      "connect_latency": {
+        "count": 145,
+        "p50_ms": 4.522,
+        "p95_ms": 9.699,
+        "p99_ms": 10.093,
+        "max_ms": 11.594,
+        "mean_ms": 4.926
+      },
+      "latency": {
+        "count": 27761,
+        "p50_ms": 2.294,
+        "p95_ms": 8.52,
+        "p99_ms": 50.332,
+        "max_ms": 87.085,
+        "mean_ms": 3.879
+      },
+      "replay_latency": {
+        "count": 145,
+        "p50_ms": 6.947,
+        "p95_ms": 13.894,
+        "p99_ms": 15.204,
+        "max_ms": 17.377,
+        "mean_ms": 7.458
+      },
+      "ended": {
+        "terminal": 146
+      }
+    },
+    {
+      "t_s": 80.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 27839,
+      "events_per_s": 2783.907,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 27839,
+        "p50_ms": 2.294,
+        "p95_ms": 9.437,
+        "p99_ms": 31.457,
+        "max_ms": 76.204,
+        "mean_ms": 3.534
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 90.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 28216,
+      "events_per_s": 2821.601,
+      "conns": 145,
+      "resumes": 0,
+      "ttfe": {
+        "count": 147,
+        "p50_ms": 22.282,
+        "p95_ms": 44.564,
+        "p99_ms": 51.642,
+        "max_ms": 51.642,
+        "mean_ms": 22.506
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 6.029,
+        "p95_ms": 14.942,
+        "p99_ms": 16.15,
+        "max_ms": 16.15,
+        "mean_ms": 7
+      },
+      "connect_latency": {
+        "count": 147,
+        "p50_ms": 11.01,
+        "p95_ms": 22.282,
+        "p99_ms": 28.312,
+        "max_ms": 28.41,
+        "mean_ms": 10.831
+      },
+      "latency": {
+        "count": 28074,
+        "p50_ms": 2.163,
+        "p95_ms": 9.699,
+        "p99_ms": 34.079,
+        "max_ms": 57.229,
+        "mean_ms": 3.464
+      },
+      "replay_latency": {
+        "count": 142,
+        "p50_ms": 14.942,
+        "p95_ms": 33.292,
+        "p99_ms": 42.048,
+        "max_ms": 42.048,
+        "mean_ms": 16.072
+      },
+      "ended": {
+        "terminal": 145
+      }
+    },
+    {
+      "t_s": 100.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 28285,
+      "events_per_s": 2828.5,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 28285,
+        "p50_ms": 2.294,
+        "p95_ms": 8.782,
+        "p99_ms": 37.224,
+        "max_ms": 59.458,
+        "mean_ms": 3.531
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 110.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 29143,
+      "events_per_s": 2914.299,
+      "conns": 147,
+      "resumes": 0,
+      "ttfe": {
+        "count": 155,
+        "p50_ms": 13.238,
+        "p95_ms": 23.593,
+        "p99_ms": 26.214,
+        "max_ms": 27.472,
+        "mean_ms": 12.853
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 3.408,
+        "p95_ms": 8.192,
+        "p99_ms": 11.033,
+        "max_ms": 11.033,
+        "mean_ms": 3.666
+      },
+      "connect_latency": {
+        "count": 155,
+        "p50_ms": 6.423,
+        "p95_ms": 13.5,
+        "p99_ms": 15.729,
+        "max_ms": 16.08,
+        "mean_ms": 6.592
+      },
+      "latency": {
+        "count": 28988,
+        "p50_ms": 2.294,
+        "p95_ms": 9.175,
+        "p99_ms": 41.419,
+        "max_ms": 84.612,
+        "mean_ms": 3.812
+      },
+      "replay_latency": {
+        "count": 155,
+        "p50_ms": 9.83,
+        "p95_ms": 18.35,
+        "p99_ms": 21.15,
+        "max_ms": 21.15,
+        "mean_ms": 9.644
+      },
+      "ended": {
+        "terminal": 147
+      }
+    },
+    {
+      "t_s": 120.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 29803,
+      "events_per_s": 2980.301,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 29803,
+        "p50_ms": 2.228,
+        "p95_ms": 8.192,
+        "p99_ms": 35.127,
+        "max_ms": 80.905,
+        "mean_ms": 3.531
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 130.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 29631,
+      "events_per_s": 2963.1,
+      "conns": 155,
+      "resumes": 0,
+      "ttfe": {
+        "count": 151,
+        "p50_ms": 10.617,
+        "p95_ms": 15.86,
+        "p99_ms": 20.972,
+        "max_ms": 22.812,
+        "mean_ms": 10.653
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 2.785,
+        "p95_ms": 4.915,
+        "p99_ms": 5.7,
+        "max_ms": 5.7,
+        "mean_ms": 2.946
+      },
+      "connect_latency": {
+        "count": 151,
+        "p50_ms": 5.112,
+        "p95_ms": 8.389,
+        "p99_ms": 14.156,
+        "max_ms": 14.255,
+        "mean_ms": 5.078
+      },
+      "latency": {
+        "count": 29480,
+        "p50_ms": 2.163,
+        "p95_ms": 7.668,
+        "p99_ms": 31.457,
+        "max_ms": 57.048,
+        "mean_ms": 3.25
+      },
+      "replay_latency": {
+        "count": 151,
+        "p50_ms": 7.995,
+        "p95_ms": 12.19,
+        "p99_ms": 19.137,
+        "max_ms": 19.69,
+        "mean_ms": 7.886
+      },
+      "ended": {
+        "terminal": 155
+      }
+    },
+    {
+      "t_s": 140.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 29132,
+      "events_per_s": 2913.2,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 29132,
+        "p50_ms": 2.261,
+        "p95_ms": 6.423,
+        "p99_ms": 34.603,
+        "max_ms": 64.276,
+        "mean_ms": 3.267
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 150.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 28904,
+      "events_per_s": 2890.4,
+      "conns": 151,
+      "resumes": 0,
+      "ttfe": {
+        "count": 150,
+        "p50_ms": 11.796,
+        "p95_ms": 16.646,
+        "p99_ms": 21.195,
+        "max_ms": 21.195,
+        "mean_ms": 11.217
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 3.211,
+        "p95_ms": 6.423,
+        "p99_ms": 8.769,
+        "max_ms": 8.769,
+        "mean_ms": 3.471
+      },
+      "connect_latency": {
+        "count": 150,
+        "p50_ms": 5.308,
+        "p95_ms": 8.323,
+        "p99_ms": 9.83,
+        "max_ms": 10.982,
+        "mean_ms": 5.242
+      },
+      "latency": {
+        "count": 28754,
+        "p50_ms": 2.294,
+        "p95_ms": 6.816,
+        "p99_ms": 56.623,
+        "max_ms": 106.278,
+        "mean_ms": 3.94
+      },
+      "replay_latency": {
+        "count": 150,
+        "p50_ms": 8.258,
+        "p95_ms": 12.583,
+        "p99_ms": 13.763,
+        "max_ms": 13.847,
+        "mean_ms": 8.087
+      },
+      "ended": {
+        "terminal": 151
+      }
+    },
+    {
+      "t_s": 160.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 28685,
+      "events_per_s": 2868.5,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 28685,
+        "p50_ms": 2.392,
+        "p95_ms": 11.928,
+        "p99_ms": 41.419,
+        "max_ms": 71.023,
+        "mean_ms": 3.964
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 170.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 28706,
+      "events_per_s": 2870.6,
+      "conns": 150,
+      "resumes": 0,
+      "ttfe": {
+        "count": 148,
+        "p50_ms": 7.471,
+        "p95_ms": 12.452,
+        "p99_ms": 13.369,
+        "max_ms": 15.379,
+        "mean_ms": 7.637
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 2.195,
+        "p95_ms": 3.801,
+        "p99_ms": 4.295,
+        "max_ms": 4.295,
+        "mean_ms": 2.283
+      },
+      "connect_latency": {
+        "count": 148,
+        "p50_ms": 3.506,
+        "p95_ms": 6.619,
+        "p99_ms": 7.34,
+        "max_ms": 7.375,
+        "mean_ms": 3.616
+      },
+      "latency": {
+        "count": 28560,
+        "p50_ms": 2.195,
+        "p95_ms": 7.733,
+        "p99_ms": 53.477,
+        "max_ms": 109.213,
+        "mean_ms": 3.904
+      },
+      "replay_latency": {
+        "count": 146,
+        "p50_ms": 5.439,
+        "p95_ms": 9.437,
+        "p99_ms": 10.879,
+        "max_ms": 11.996,
+        "mean_ms": 5.602
+      },
+      "ended": {
+        "terminal": 150
+      }
+    },
+    {
+      "t_s": 180.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 28516,
+      "events_per_s": 2851.6,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 28516,
+        "p50_ms": 2.195,
+        "p95_ms": 7.602,
+        "p99_ms": 34.079,
+        "max_ms": 83.618,
+        "mean_ms": 3.324
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 190.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 28775,
+      "events_per_s": 2877.5,
+      "conns": 148,
+      "resumes": 0,
+      "ttfe": {
+        "count": 155,
+        "p50_ms": 9.568,
+        "p95_ms": 16.646,
+        "p99_ms": 18.612,
+        "max_ms": 20.126,
+        "mean_ms": 10.002
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 2.851,
+        "p95_ms": 5.177,
+        "p99_ms": 6.204,
+        "max_ms": 6.204,
+        "mean_ms": 2.93
+      },
+      "connect_latency": {
+        "count": 155,
+        "p50_ms": 4.588,
+        "p95_ms": 9.175,
+        "p99_ms": 10.879,
+        "max_ms": 11.062,
+        "mean_ms": 4.752
+      },
+      "latency": {
+        "count": 28625,
+        "p50_ms": 2.294,
+        "p95_ms": 7.209,
+        "p99_ms": 57.147,
+        "max_ms": 101.705,
+        "mean_ms": 3.935
+      },
+      "replay_latency": {
+        "count": 150,
+        "p50_ms": 6.75,
+        "p95_ms": 13.5,
+        "p99_ms": 15.466,
+        "max_ms": 16.889,
+        "mean_ms": 7.233
+      },
+      "ended": {
+        "terminal": 148
+      }
+    },
+    {
+      "t_s": 200.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 29726,
+      "events_per_s": 2972.599,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 29726,
+        "p50_ms": 2.228,
+        "p95_ms": 7.668,
+        "p99_ms": 54.526,
+        "max_ms": 104.751,
+        "mean_ms": 3.706
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 210.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 30027,
+      "events_per_s": 3002.701,
+      "conns": 155,
+      "resumes": 0,
+      "ttfe": {
+        "count": 155,
+        "p50_ms": 8.061,
+        "p95_ms": 12.583,
+        "p99_ms": 14.287,
+        "max_ms": 16.22,
+        "mean_ms": 8.398
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 2.425,
+        "p95_ms": 4.129,
+        "p99_ms": 4.365,
+        "max_ms": 4.365,
+        "mean_ms": 2.49
+      },
+      "connect_latency": {
+        "count": 155,
+        "p50_ms": 3.768,
+        "p95_ms": 6.16,
+        "p99_ms": 6.881,
+        "max_ms": 7.301,
+        "mean_ms": 3.889
+      },
+      "latency": {
+        "count": 29872,
+        "p50_ms": 2.163,
+        "p95_ms": 6.029,
+        "p99_ms": 32.244,
+        "max_ms": 80.766,
+        "mean_ms": 3.18
+      },
+      "replay_latency": {
+        "count": 155,
+        "p50_ms": 5.964,
+        "p95_ms": 10.224,
+        "p99_ms": 10.748,
+        "max_ms": 12.345,
+        "mean_ms": 6.068
+      },
+      "ended": {
+        "terminal": 155
+      }
+    },
+    {
+      "t_s": 220.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 29839,
+      "events_per_s": 2983.9,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 29839,
+        "p50_ms": 2.228,
+        "p95_ms": 6.816,
+        "p99_ms": 38.273,
+        "max_ms": 67.242,
+        "mean_ms": 3.361
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 230.103,
+      "target_streams": 75,
+      "active_streams": 75,
+      "streams_started": 75,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 29690,
+      "events_per_s": 2969,
+      "conns": 155,
+      "resumes": 0,
+      "ttfe": {
+        "count": 148,
+        "p50_ms": 8.52,
+        "p95_ms": 20.185,
+        "p99_ms": 22.02,
+        "max_ms": 23.362,
+        "mean_ms": 9.261
+      },
+      "start_latency": {
+        "count": 75,
+        "p50_ms": 2.425,
+        "p95_ms": 5.571,
+        "p99_ms": 6.461,
+        "max_ms": 6.461,
+        "mean_ms": 2.713
+      },
+      "connect_latency": {
+        "count": 148,
+        "p50_ms": 3.932,
+        "p95_ms": 9.961,
+        "p99_ms": 12.845,
+        "max_ms": 13.237,
+        "mean_ms": 4.413
+      },
+      "latency": {
+        "count": 29544,
+        "p50_ms": 2.261,
+        "p95_ms": 9.175,
+        "p99_ms": 54.526,
+        "max_ms": 109.721,
+        "mean_ms": 4.004
+      },
+      "replay_latency": {
+        "count": 146,
+        "p50_ms": 6.16,
+        "p95_ms": 15.204,
+        "p99_ms": 17.564,
+        "max_ms": 19.431,
+        "mean_ms": 6.866
+      },
+      "ended": {
+        "terminal": 155
+      }
+    },
+    {
+      "t_s": 240.103,
+      "target_streams": 0,
+      "active_streams": 75,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 0,
+      "events": 28506,
+      "events_per_s": 2850.599,
+      "conns": 0,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 28506,
+        "p50_ms": 2.228,
+        "p95_ms": 6.357,
+        "p99_ms": 35.652,
+        "max_ms": 70.622,
+        "mean_ms": 3.29
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      }
+    },
+    {
+      "t_s": 250.004,
+      "target_streams": 0,
+      "active_streams": 0,
+      "streams_started": 0,
+      "start_errors": 0,
+      "streams_done": 75,
+      "events": 27810,
+      "events_per_s": 2808.97,
+      "conns": 148,
+      "resumes": 0,
+      "ttfe": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "start_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "connect_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "latency": {
+        "count": 27810,
+        "p50_ms": 2.228,
+        "p95_ms": 6.357,
+        "p99_ms": 43.516,
+        "max_ms": 91.036,
+        "mean_ms": 3.471
+      },
+      "replay_latency": {
+        "count": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "p99_ms": 0,
+        "max_ms": 0,
+        "mean_ms": 0
+      },
+      "ended": {
+        "terminal": 148
+      }
+    }
+  ],
+  "unfinished": 0,
+  "passed": true
+}
