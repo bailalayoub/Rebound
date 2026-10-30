@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Per-phase resource tables of docs/STRESS-v0.1.0.md (NAME.steps.md), from the samples of each run.
-# Usage: docs/stress-v0.1.0/steps.sh RUN... (a run named baseline-* uses the one-instance columns)
+# Per-phase resource tables of docs/benchmarks/v0.1.0/README.md (NAME.steps.md), from the samples of each run.
+# Usage: docs/benchmarks/v0.1.0/steps.sh RUN... (a run named baseline-* uses the one-instance columns)
 set -euo pipefail
 cd "$(dirname "$0")/raw"
-tool=../../../bin/tools/rebound-load
+tool=../../../../bin/tools/rebound-load
 [ -x "$tool.exe" ] && tool="$tool.exe"
 MiB=0.00000095367431640625
 stack="app-1 CPU %=deploy-app-1-1:cpu_pct:mean,app-2 CPU %=deploy-app-2-1:cpu_pct:mean,Redis CPU %=deploy-redis-1:cpu_pct:mean,nginx CPU %=deploy-nginx-1:cpu_pct:mean,app-1 mem MiB=deploy-app-1-1:mem_bytes:max*$MiB,app-2 mem MiB=deploy-app-2-1:mem_bytes:max*$MiB,Redis used MiB=redis:used_memory:max*$MiB,Redis ops/s=redis:instantaneous_ops_per_sec:mean,Redis clients=redis:connected_clients:max,app-1 goroutines=deploy-app-1-1:goroutines:max,app-2 goroutines=deploy-app-2-1:goroutines:max"

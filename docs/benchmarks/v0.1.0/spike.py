@@ -1,7 +1,7 @@
-# Spike recovery of docs/STRESS-v0.1.0.md: the per-window event latency p99 around the spike, and
+# Spike recovery of docs/benchmarks/v0.1.0/README.md: the per-window event latency p99 around the spike, and
 # the time from the end of the spike phase until the windowed p99 is back at or under the baseline
 # (the p99 of the first phase as a whole) and stays there for the rest of the run.
-# Usage: python spike.py REPORT.json (from docs/stress-v0.1.0/raw)
+# Usage: python spike.py REPORT.json (from docs/benchmarks/v0.1.0/raw)
 import json, sys
 r = json.load(open(sys.argv[1]))
 phases = r["phases"]

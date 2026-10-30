@@ -1,4 +1,4 @@
-# Load-test overlay on deploy/docker-compose.yml (docs/STRESS-v0.1.0.md): the stack itself is
+# Load-test overlay on deploy/docker-compose.yml (docs/benchmarks/v0.1.0/README.md): the stack itself is
 # unchanged; it is pinned to CPUs 0-7 so the load generator (CPUs 8-11) does not steal its CPU,
 # and each instance serves pprof/expvar on its own 127.0.0.1:6060 for the samplers, which join
 # the instance's network namespace. The load generator reaches nginx on the compose network; nginx

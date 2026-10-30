@@ -1,6 +1,6 @@
-# Knee table of docs/STRESS-v0.1.0.md: per step, delivered events/s against the ideal
+# Knee table of docs/benchmarks/v0.1.0/README.md: per step, delivered events/s against the ideal
 # (streams x events/s per stream x mean readers per stream) and p99 against the previous step.
-# Usage: python knee.py REPORT.json... (from docs/stress-v0.1.0/raw)
+# Usage: python knee.py REPORT.json... (from docs/benchmarks/v0.1.0/raw)
 import json, sys
 for path in sys.argv[1:]:
     r = json.load(open(path))

@@ -1,4 +1,4 @@
-# 07 — Code standards
+# Code standards
 
 ## Go
 

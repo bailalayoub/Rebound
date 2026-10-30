@@ -1,4 +1,4 @@
-// Command rebound-load is the load and endurance harness of docs/STRESS-v0.1.0.md. It is a tool,
+// Command rebound-load is the load and endurance harness of docs/benchmarks/v0.1.0. It is a tool,
 // not a test: it is never part of `make check`; the Makefile targets load, soak, spike, storm,
 // faults and slow run it (scripts/stress).
 //

@@ -20,7 +20,7 @@ import (
 )
 
 // Integration tests need a real Redis at REDIS_ADDR (default localhost:6379) and a Redis started
-// with --cluster-enabled yes at REDIS_CLUSTER_ADDR (default localhost:7000); see docker-compose.yml.
+// with --cluster-enabled yes at REDIS_CLUSTER_ADDR (default localhost:7000); make redis-up.
 
 func envOr(name, def string) string {
 	if v := os.Getenv(name); v != "" {

@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Repository layout** (no API change): CONTRIBUTING, SECURITY and CODE_OF_CONDUCT moved to
+  `.github/`, the dev Redis compose file to `scripts/dev-redis.yml` (`make redis-up`), the README
+  quick start fixture to `examples/quickstart`, the stress campaign to `docs/benchmarks/v0.1.0/`
+  and the maintainer notes to `docs/project/`. The README is now a short overview with a map of
+  the repository; the integration details moved to `docs/usage.md`, with an index in
+  `docs/README.md`.
+
 ## [0.1.0] - 2026-10-26
 
 First public release: resumable Server-Sent Events streams for Go.

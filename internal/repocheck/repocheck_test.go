@@ -47,7 +47,7 @@ func publishedPorts(t *testing.T, path string) []string {
 // Docker publishes on every interface, and these services have no authentication.
 func TestComposePortsAreLocalOnly(t *testing.T) {
 	t.Parallel()
-	for _, path := range []string{"docker-compose.yml", "deploy/docker-compose.yml", "playground/docker-compose.yml"} {
+	for _, path := range []string{"scripts/dev-redis.yml", "deploy/docker-compose.yml", "playground/docker-compose.yml"} {
 		ports := publishedPorts(t, path)
 		require.NotEmpty(t, ports, "%s publishes no port: is the parser still right?", path)
 		for _, p := range ports {
