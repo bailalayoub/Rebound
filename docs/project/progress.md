@@ -1,7 +1,7 @@
 # Progress
 
 Journal of work on the repository. Newest entries last. Results and their raw outputs live in
-[STRESS-v0.1.0.md](STRESS-v0.1.0.md) and [stress-v0.1.0/raw/](stress-v0.1.0/raw).
+[benchmarks/v0.1.0](../benchmarks/v0.1.0/README.md) and [raw/](../benchmarks/v0.1.0/raw).
 
 ## Stress campaign v0.1.0 (branch `test/stress-v0.1.0`)
 
@@ -70,7 +70,7 @@ outside it (see the report).
   large streams, read without pausing) is the control for the volume they write; slow-3 is on par
   with it. slow-2 had one 2.9 s stall of all streams that slow-1 and slow-3 did not reproduce;
   cause not found, reported as is.
-- Report written (docs/STRESS-v0.1.0.md) with a summary table, the deployment findings and what
+- Report written (docs/benchmarks/v0.1.0/README.md) with a summary table, the deployment findings and what
   could not be tested; README "Performance" section with the measured knees.
 - Slow clients: the harness counted the slow readers' late events in the latency of the normal
   streams (slow-1); they now stay out of the windows (`TestRun_SlowReaderIsReleasedAndResumes`
@@ -78,5 +78,5 @@ outside it (see the report).
   normally: PASS; every slow reader released by `httpx: write timeout` and resumed without loss,
   the other streams on par with the heavy control. One 2.9 s stall in slow-2 did not recur in
   slow-1 or slow-3 (empty Redis); cause not found.
-- Report written: docs/STRESS-v0.1.0.md (summary, per-test tables, findings, limits); README
+- Report written: docs/benchmarks/v0.1.0/README.md (summary, per-test tables, findings, limits); README
   "Performance" section; the example's `/loadtest/streams` and `DEBUG_ADDR` documented.

@@ -13,7 +13,7 @@ users. It must stay small and readable; it is not a product.
 | `GET` | `/streams/:id` | `ginx.Stream` |
 | `POST` | `/streams/:id/cancel` | `ginx.Cancel` |
 | `POST` | `/conformance/streams` | deterministic producer (docs/06), only with `CONFORMANCE=1` |
-| `POST` | `/loadtest/streams` | timestamped producer of the stress harness (docs/STRESS-v0.1.0.md), only with `CONFORMANCE=1` |
+| `POST` | `/loadtest/streams` | timestamped producer of the stress harness (docs/benchmarks/v0.1.0/README.md), only with `CONFORMANCE=1` |
 | `GET` | `/` | static UI (`web/index.html`, `web/app.js`, built client) |
 | `GET` | `/healthz` | `{"store":"memory|redis","instance":"<hostname>"}` |
 

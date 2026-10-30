@@ -1,4 +1,4 @@
-# 04 — Roadmap
+# Roadmap
 
 v0.1.0 was built in six milestones. The spec, the ADRs and a few test comments refer to them by
 name (M0 to M5), so this page keeps what each one delivered, followed by what could come next.
@@ -17,7 +17,7 @@ name (M0 to M5), so this page keeps what each one delivered, followed by what co
 ## Next
 
 None of these is scheduled. Each one that changes the public API or the wire protocol starts with an
-ADR (see [CONTRIBUTING.md](../CONTRIBUTING.md)).
+ADR (see [CONTRIBUTING.md](../../.github/CONTRIBUTING.md)).
 
 - **Producer hand-off.** A producer runs on the instance that started it. If that instance dies,
   readers get `producer_lost`; nothing resumes the generation elsewhere.

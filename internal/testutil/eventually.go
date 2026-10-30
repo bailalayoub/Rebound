@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// pollInterval is the step of Eventually (docs/07: 10 ms polling helpers are allowed).
+// pollInterval is the step of Eventually (code standards: 10 ms polling helpers are allowed).
 const pollInterval = 10 * time.Millisecond
 
 // Eventually polls cond every 10 ms until it returns true, and fails t if that has not happened

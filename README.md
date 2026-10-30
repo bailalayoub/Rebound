@@ -122,7 +122,7 @@ with jitter, never delivers an event twice, zero dependencies.
 
 Measured on one laptop (AMD Ryzen 5 4600H, 6 cores / 12 threads, 15.4 GB RAM, Docker Desktop on
 Windows 10), with the load generator on the same machine; streams of 20 events/s, 1–3 readers each.
-Method, raw outputs and every run: [docs/STRESS-v0.1.0.md](docs/STRESS-v0.1.0.md).
+Method, raw outputs and every run: [docs/benchmarks/v0.1.0/README.md](docs/benchmarks/v0.1.0/README.md).
 
 | setup | knee (streams in flight) | delivered events/s at the knee | event latency p50 / p99 at the knee |
 |---|---|---|---|
@@ -232,9 +232,9 @@ Ollama) with one `docker compose` command. These are local demos without authent
 
 **Run the tests.** `make check` (format, vet, lint, `go test -race`) and `make cover` need Go 1.26
 and the linters from `make tools`; `scripts/in-docker.sh check` runs the same thing in a container
-with everything installed. `make test-integration` needs Redis (`docker compose up -d redis`),
+with everything installed. `make test-integration` needs Redis (`make redis-up`),
 `make conformance` runs the chaos tester against the example server, `make client-test` tests the
-TypeScript client. [CONTRIBUTING.md](CONTRIBUTING.md) has the details.
+TypeScript client. [CONTRIBUTING.md](.github/CONTRIBUTING.md) has the details.
 
 **Write a store.** Implement the six methods of [`store.Store`](store/store.go) (`Create`, `Append`,
 `Read`, `Status`, `Cancel`, `Touch`); the doc comments state the contract (dense sequence numbers,
@@ -259,10 +259,10 @@ that passes it gives the same guarantees to the same TypeScript client.
 
 ## Contributing
 
-Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first: tests come
+Issues and pull requests are welcome. Read [CONTRIBUTING.md](.github/CONTRIBUTING.md) first: tests come
 first, everything runs under `-race`, and changes to the public API, the wire protocol or the
 dependencies start with an ADR. Security issues go through
-[private advisories](SECURITY.md), never public issues.
+[private advisories](.github/SECURITY.md), never public issues.
 
 ## Roadmap / ideas
 
@@ -282,7 +282,7 @@ v0.1.0 does what is described above and is tested hard, but it has known limits:
   passing it would let other stacks use the same client.
 - **SSE only.** A WebSocket transport could reuse the same store and guarantees, if there is demand.
 
-See [`docs/04-roadmap.md`](docs/04-roadmap.md) for what each milestone delivered.
+See [`docs/project/roadmap.md`](docs/project/roadmap.md) for what each milestone delivered.
 
 ## License
 

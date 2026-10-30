@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# The stress campaign of docs/STRESS-v0.1.0.md. Each subcommand is one test; every output it
-# relies on is kept under $OUT (default docs/stress-v0.1.0/raw). Never part of `make check`.
+# The stress campaign of docs/benchmarks/v0.1.0/README.md. Each subcommand is one test; every output it
+# relies on is kept under $OUT (default docs/benchmarks/v0.1.0/raw). Never part of `make check`.
 #
 #   scripts/stress/run.sh up | down | env
 #   scripts/stress/run.sh load NAME [rebound-load run flags]     # one harness run on the deploy network
@@ -19,7 +19,7 @@ if pwd -W >/dev/null 2>&1; then
   hostroot="$(cd "$root" && pwd -W)"
   export MSYS_NO_PATHCONV=1
 fi
-out="${OUT:-$root/docs/stress-v0.1.0/raw}"
+out="${OUT:-$root/docs/benchmarks/v0.1.0/raw}"
 mkdir -p "$out"
 hostout="$out"
 if pwd -W >/dev/null 2>&1; then hostout="$(cd "$out" && pwd -W)"; fi

@@ -2,7 +2,7 @@
 
 Load, endurance, spike, reconnection, fault and slow-client tests of Rebound v0.1.0 on the
 `deploy/` stack (Redis, two instances of `examples/chat`, nginx round-robin). Every figure below
-comes from a file in [`stress-v0.1.0/raw/`](stress-v0.1.0/raw), written by the command named
+comes from a file in [`raw/`](raw), written by the command named
 next to it. Nothing in the library, the spec, the public API or the Store contract was changed.
 
 <!-- summary:start -->
@@ -34,7 +34,7 @@ Docker's 10 s cuts the example's 30 s drain; Redis runs without persistence.
 ## 1. Environment
 
 One laptop runs everything: the stack and the load generator share the machine, which is the
-main limit of these numbers (§11). From [`environment.txt`](stress-v0.1.0/raw/environment.txt):
+main limit of these numbers (§11). From [`environment.txt`](raw/environment.txt):
 
 | | |
 |---|---|
@@ -47,7 +47,7 @@ main limit of these numbers (§11). From [`environment.txt`](stress-v0.1.0/raw/e
 | nginx | 1.28.3 (`nginx:1.28-alpine`) |
 | Rebound | `rebound-chat:dev` built from this branch (the library is v0.1.0 unchanged) |
 
-CPU pinning ([`scripts/stress/compose.yml`](../scripts/stress/compose.yml)): Redis, both instances
+CPU pinning ([`scripts/stress/compose.yml`](../../../scripts/stress/compose.yml)): Redis, both instances
 and nginx on CPUs 0–7; the load generator on CPUs 8–11. Host port 8080 is held by another service
 on this machine, so the overlay publishes nginx on 127.0.0.1:18080; the generator reaches nginx on
 the compose network. Everything binds to 127.0.0.1; `CONFORMANCE=1` as in `deploy/`.
@@ -60,9 +60,9 @@ the harness measured 10.29–10.54 ms at the start and at the end of every run.
 
 ## 2. Method
 
-**Harness.** [`cmd/rebound-load`](../cmd/rebound-load) on [`internal/loadtest`](../internal/loadtest),
+**Harness.** [`cmd/rebound-load`](../../../cmd/rebound-load) on [`internal/loadtest`](../../../internal/loadtest),
 standard library only, run in a container on the compose network by
-[`scripts/stress/run.sh`](../scripts/stress/run.sh) (`make load`, `make soak`, …; none of them is
+[`scripts/stress/run.sh`](../../../scripts/stress/run.sh) (`make load`, `make soak`, …; none of them is
 part of `make check`). It is built **without `-race`: these runs are throughput measurements.**
 Its unit tests, like every Go test of the repository, run with `-race` in `make check`.
 
@@ -122,7 +122,7 @@ per container, Redis ops/s and clients, per step. **Pass:** zero gaps, zero dupl
 one terminal per stream at every step below the knee. **Knee:** the first step where delivered
 events/s fall below 95 % of the ideal (streams × 20 events/s × readers per stream), p99 event
 latency at least triples from the previous step, or any HTTP error or integrity violation
-appears ([`knee.py`](stress-v0.1.0/knee.py) → [`knee.txt`](stress-v0.1.0/raw/knee.txt)).
+appears ([`knee.py`](knee.py) → [`knee.txt`](raw/knee.txt)).
 
 **Commands:** `make load NAME=…` (`scripts/stress/run.sh ramp`: phases
 `50x1-3@3m,200x1-3@3m,500x1-3@3m,1000x1-3@3m,2000x1-3@3m`, 5 % of streams audited);
@@ -132,16 +132,16 @@ appears ([`knee.py`](stress-v0.1.0/knee.py) → [`knee.txt`](stress-v0.1.0/raw/k
 
 ### 4.1 nginx as shipped: the proxy is the knee
 
-[`ramp-1`](stress-v0.1.0/raw/ramp-1.txt) used `deploy/nginx.conf` unchanged. Its `events {}`
+[`ramp-1`](raw/ramp-1.txt) used `deploy/nginx.conf` unchanged. Its `events {}`
 means one worker process with 512 connections, and a proxied request holds two (client and
 upstream). From the 200-stream step nginx logged `512 worker_connections are not enough`
-1 377 661 times ([`ramp-1.logs.txt`](stress-v0.1.0/raw/ramp-1.logs.txt)); clients saw transport
+1 377 661 times ([`ramp-1.logs.txt`](raw/ramp-1.logs.txt)); clients saw transport
 errors (976 409 at 2000 streams), TTFE p99 reached 137 s and readers that never got through hit
 their deadline. Neither instance logged a warning or an error. Every failed stream still within
 Retention when checked (20 of 40) was `done` at seq 401 in Redis
-([`ramp-1.failed-in-redis.txt`](stress-v0.1.0/raw/ramp-1.failed-in-redis.txt)): the library
+([`ramp-1.failed-in-redis.txt`](raw/ramp-1.failed-in-redis.txt)): the library
 finished them; nginx refused the readers. The fine ramp
-[`ramp-shipped-fine-1`](stress-v0.1.0/raw/ramp-shipped-fine-1.txt) places this knee at **150
+[`ramp-shipped-fine-1`](raw/ramp-shipped-fine-1.txt) places this knee at **150
 streams** (10 379 transport errors, TTFE p99 52 s); readers retried until they got through, so
 every stream still ended with exactly one terminal.
 
@@ -154,15 +154,15 @@ every stream still ended with exactly one terminal.
 
 **Finding (deployment, not library):** `deploy/nginx.conf` caps the demo stack at about 100
 concurrent streams. Raising `worker_processes` and `worker_connections` is enough
-([`scripts/stress/nginx-tuned.conf`](../scripts/stress/nginx-tuned.conf)). `deploy/` is not
+([`scripts/stress/nginx-tuned.conf`](../../../scripts/stress/nginx-tuned.conf)). `deploy/` is not
 changed by this campaign.
 
 ### 4.2 nginx limits raised: the knee of Rebound on Redis
 
 All other runs use `NGINX=tuned`: `worker_processes auto` (8 workers), `worker_connections 65536`;
 the `http` block is the one of `deploy/nginx.conf`, unchanged. Two fine ramps, same phases,
-different seeds ([`ramp-fine-1`](stress-v0.1.0/raw/ramp-fine-1.txt),
-[`ramp-fine-2`](stress-v0.1.0/raw/ramp-fine-2.txt)):
+different seeds ([`ramp-fine-1`](raw/ramp-fine-1.txt),
+[`ramp-fine-2`](raw/ramp-fine-2.txt)):
 
 | step | run | delivered ev/s | efficiency | TTFE p50 / p99 ms | lat p50 / p95 / p99 ms | HTTP errors | gaps / dups / one terminal | pass |
 |---|---|---|---|---|---|---|---|---|
@@ -184,8 +184,8 @@ events/s at every step and within 6.6 % on p99 latency. Below the knee — and a
 every audited stream (543 in the two runs) was byte-identical to the log.
 
 **What saturates is Redis.** Per-step means of run 1
-([`ramp-fine-1.steps.md`](stress-v0.1.0/raw/ramp-fine-1.steps.md); run 2 in
-[`ramp-fine-2.steps.md`](stress-v0.1.0/raw/ramp-fine-2.steps.md) is within a few percent):
+([`ramp-fine-1.steps.md`](raw/ramp-fine-1.steps.md); run 2 in
+[`ramp-fine-2.steps.md`](raw/ramp-fine-2.steps.md) is within a few percent):
 
 | step | app-1 / app-2 CPU % | Redis CPU % | nginx CPU % | Redis ops/s | Redis clients | goroutines per instance |
 |---|---|---|---|---|---|---|
@@ -202,7 +202,7 @@ the load (start p50 2.8 → 37 ms, connect p50 4.4 → 67 ms from 50 to 300 stre
 Redis. TTFE p99 of the first step (105.9–331.4 ms across the ramps, also on the memory store) come
 from the first seconds of a run, when 50 streams start at once on cold connections.
 
-Beyond the knee, the coarse ramp [`ramp-tuned-1`](stress-v0.1.0/raw/ramp-tuned-1.txt) shows
+Beyond the knee, the coarse ramp [`ramp-tuned-1`](raw/ramp-tuned-1.txt) shows
 graceful saturation, not failure: still no HTTP error at 500, 1000 or 2000 streams; delivery stuck
 at 6–8 k events/s; p99 latency 0.6–1.6 s. At 1000 and 2000 streams appends slow down until a
 400-event stream lasts longer than the readers' deadline (20 s + 2 min of slack): 586 and 5 899
@@ -213,9 +213,9 @@ says `deadline`.)
 
 ### 4.3 Baseline: one instance on the memory store
 
-[`baseline-1`](stress-v0.1.0/raw/baseline-1.txt): the same coarse ramp against one instance with
+[`baseline-1`](raw/baseline-1.txt): the same coarse ramp against one instance with
 `REBOUND_STORE=memory`, no nginx, the deploy stack stopped
-([`baseline-1.steps.md`](stress-v0.1.0/raw/baseline-1.steps.md)).
+([`baseline-1.steps.md`](raw/baseline-1.steps.md)).
 
 | step | delivered ev/s | efficiency | lat p50 / p99 ms | TTFE p99 ms | CPU % | memory MiB | integrity | pass |
 |---|---|---|---|---|---|---|---|---|
@@ -253,14 +253,14 @@ the 20 ms limit), 10.36 ms in the harness at its start and at its end.
 | goroutines back to baseline | 7 and 7 before the load → 7 and 7 15 minutes after it | PASS |
 | Redis keys back to baseline | 0 before → 0 at most 11.6 minutes after the last stream ended (Retention 10 minutes); `used_memory` 2.71 MB → 2.61 MB | PASS |
 
-[`soak-1.txt`](stress-v0.1.0/raw/soak-1.txt): 2 792 events/s delivered; event latency p50 / p95 /
+[`soak-1.txt`](raw/soak-1.txt): 2 792 events/s delivered; event latency p50 / p95 /
 p99 2.7 / 27.0 / 80.7 ms (max 1.73 s); TTFE 9.4 / 62.4 / 172.0 ms; events replayed on resume
 (written before the reconnection) arrived 6.9 / 51.9 / 142.6 ms after they were written. Streams
 were produced 12 722 times by app-1 and 12 553 times by app-2; their readers were served by both
-upstreams (`served_by_upstream` in [`soak-1.json`](stress-v0.1.0/raw/soak-1.json)).
+upstreams (`served_by_upstream` in [`soak-1.json`](raw/soak-1.json)).
 
 **Trends.** Least-squares fit over the load after a 20-minute warm-up (minutes 23 to 123, 100
-samples per series; [`soak-1.trend.txt`](stress-v0.1.0/raw/soak-1.trend.txt)):
+samples per series; [`soak-1.trend.txt`](raw/soak-1.trend.txt)):
 
 | series | mean | min – max | slope per hour | slope, % of mean per hour | R² |
 |---|---|---|---|---|---|
@@ -278,12 +278,12 @@ samples per series; [`soak-1.trend.txt`](stress-v0.1.0/raw/soak-1.trend.txt)):
 The Go heap, goroutines, fds and Redis show no upward trend. RSS rises by under 1 MiB over the
 100 minutes: it climbs in the first hour while the runtime's heap reaches its working size and
 then flattens. Over the second hour alone
-([`soak-1.trend-2nd-hour.txt`](stress-v0.1.0/raw/soak-1.trend-2nd-hour.txt)) both instances grow
+([`soak-1.trend-2nd-hour.txt`](raw/soak-1.trend-2nd-hour.txt)) both instances grow
 by +0.19 MiB/h (+0.30 %/h, R² 0.10–0.14) while their heap in use falls. With R² that low this is
 noise around a plateau, not a leak; a leak would also show in the heap. Redis keys stay flat at
 about 4 400: Retention (10 min) bounds them, and they fall to 0 once the load stops.
 
-Samples every 10 minutes ([`soak-1.table.txt`](stress-v0.1.0/raw/soak-1.table.txt); minute 0 is
+Samples every 10 minutes ([`soak-1.table.txt`](raw/soak-1.table.txt); minute 0 is
 the idle baseline, the load runs from minute 3 to 123):
 
 | min | app-1 / app-2 RSS MiB | app-1 / app-2 heap MiB | app-1 / app-2 goroutines | app-1 / app-2 fds | Redis MiB | Redis keys |
@@ -306,17 +306,17 @@ the idle baseline, the load runs from minute 3 to 123):
 
 Minute 0 of app-2 and Redis is the first sample of their files: `analyze -table-every` takes the
 last sample at or before each offset, and theirs were taken 0.6–0.9 s after app-1's. One Redis
-sample is missing (22:25:29, a failed `redis-cli INFO`, [`soak-1.host.err`](stress-v0.1.0/raw/soak-1.host.err)).
+sample is missing (22:25:29, a failed `redis-cli INFO`, [`soak-1.host.err`](raw/soak-1.host.err)).
 The last stream ended at 22:14:55; Redis held 150 keys at 22:24:29 and 0 at 22:26:29.
 
-![RSS per instance](stress-v0.1.0/soak-rss.svg)
-![Go heap per instance](stress-v0.1.0/soak-heap.svg)
-![Goroutines per instance](stress-v0.1.0/soak-goroutines.svg)
-![Open file descriptors per instance](stress-v0.1.0/soak-fds.svg)
-![Redis used_memory](stress-v0.1.0/soak-redis-memory.svg)
-![Redis keys](stress-v0.1.0/soak-redis-keys.svg)
+![RSS per instance](soak-rss.svg)
+![Go heap per instance](soak-heap.svg)
+![Goroutines per instance](soak-goroutines.svg)
+![Open file descriptors per instance](soak-fds.svg)
+![Redis used_memory](soak-redis-memory.svg)
+![Redis keys](soak-redis-keys.svg)
 
-Charts: `rebound-load chart -in soak-1.*.csv -series … -out docs/stress-v0.1.0/soak-*.svg`. The
+Charts: `rebound-load chart -in soak-1.*.csv -series … -out docs/benchmarks/v0.1.0/soak-*.svg`. The
 x axis is minutes since the first sample; the load runs from minute 3 to minute 123.
 
 **Verdict: PASS.**
@@ -339,17 +339,17 @@ back to the soak load for 5 minutes; 5 s windows; 5 % of streams audited. Timer 
 | 375x1-3~10s@2m (spike) | 1 125 | 2 258 | 5 694 | 253.8 / 671.1 | 134.2 / 310.4 / 465.6 | 0 | 0 | 1 125 `done` | PASS |
 | 75x1-3@5m (after) | 975 | 1 968 | 3 102 | 11.7 / 390.1 | 3.9 / 169.9 / 281.0 | 0 | 0 | 975 `done` | PASS |
 
-([`spike-1.txt`](stress-v0.1.0/raw/spike-1.txt); the "after" phase includes the last 30 s of the
+([`spike-1.txt`](raw/spike-1.txt); the "after" phase includes the last 30 s of the
 spike's streams, which finish after the target has dropped.) No container restarted (all up since
-before the soak, [`containers-after-spike.txt`](stress-v0.1.0/raw/containers-after-spike.txt)), no
+before the soak, [`containers-after-spike.txt`](raw/containers-after-spike.txt)), no
 instance logged a warning or an error, nginx logged nothing, no stream was unfinished, and all 136 audited streams
 matched the log. During the spike Redis is at one full core again (104 %) and each instance holds
 about 1 710 goroutines; 35 s after the spike phase ends they are back at 330–360, the level of the
-baseline phase ([`spike-1.steps.md`](stress-v0.1.0/raw/spike-1.steps.md), samples every 5 s in
+baseline phase ([`spike-1.steps.md`](raw/spike-1.steps.md), samples every 5 s in
 `spike-1.deploy-app-*.csv`).
 
-**Recovery** ([`spike.py`](stress-v0.1.0/spike.py) →
-[`spike-1.recovery.txt`](stress-v0.1.0/raw/spike-1.recovery.txt)). The 5 s windowed p99 is noisy: it
+**Recovery** ([`spike.py`](spike.py) →
+[`spike-1.recovery.txt`](raw/spike-1.recovery.txt)). The 5 s windowed p99 is noisy: it
 alternates between low and high windows in the baseline phase too, where 14 of 36 windows are above
 the phase's own p99 (77.6 ms) and the windowed p99 ranges over 24.4–138.4 ms.
 
@@ -377,10 +377,10 @@ flight for 1 minute, 3 readers each; a stream is 3 000 events 10 ms apart (100 e
 connection is cut after 1–5 events (`every:1-5`) or after 5–50 ms (`DROP=ms:5-50`), and the reader
 reconnects at once with `Last-Event-ID` through nginx round-robin; every stream audited. The two
 `every:1-5` runs are the same test with different seeds. Upstream addresses come from the compose
-network ([`storm-1.upstreams.txt`](stress-v0.1.0/raw/storm-1.upstreams.txt), identical in the three
+network ([`storm-1.upstreams.txt`](raw/storm-1.upstreams.txt), identical in the three
 runs): 172.20.0.3 is app-1, 172.20.0.4 is app-2.
 
-| | [storm-1](stress-v0.1.0/raw/storm-1.txt) | [storm-2](stress-v0.1.0/raw/storm-2.txt) | [storm-ms-1](stress-v0.1.0/raw/storm-ms-1.txt) |
+| | [storm-1](raw/storm-1.txt) | [storm-2](raw/storm-2.txt) | [storm-ms-1](raw/storm-ms-1.txt) |
 |---|---|---|---|
 | drops | every 1–5 events | every 1–5 events | every 5–50 ms |
 | timer (timercheck; harness start / end) | 10.34; 10.35 / 10.37 ms | 10.33; 10.45 / 10.35 ms | 10.44; 10.35 / 10.33 ms |
@@ -431,9 +431,9 @@ survives for `Retention`; `deploy/` runs Redis without persistence, and docs/how
 already says that "a Redis without persistence that restarts loses in-flight streams, and clients
 get a `404`". Three runs separate the two cases:
 
-| | [pause](stress-v0.1.0/raw/fault-redis-pause-1.txt) | [restart, as shipped](stress-v0.1.0/raw/fault-redis-1.txt) | [restart, AOF](stress-v0.1.0/raw/fault-redis-aof-1.txt) |
+| | [pause](raw/fault-redis-pause-1.txt) | [restart, as shipped](raw/fault-redis-1.txt) | [restart, AOF](raw/fault-redis-aof-1.txt) |
 |---|---|---|---|
-| fault | `docker pause` for 2.4 s: no reply, data kept | `docker stop -t 1`, 2 s, `docker start`: down about 3.5 s, no persistence | the same, Redis with `appendonly yes`, `appendfsync always` (`REDIS=aof`, [`redis-aof.yml`](../scripts/stress/redis-aof.yml)) |
+| fault | `docker pause` for 2.4 s: no reply, data kept | `docker stop -t 1`, 2 s, `docker start`: down about 3.5 s, no persistence | the same, Redis with `appendonly yes`, `appendfsync always` (`REDIS=aof`, [`redis-aof.yml`](../../../scripts/stress/redis-aof.yml)) |
 | `make` / command | `run.sh fault-redis-pause` | `make faults` → `run.sh fault-redis` | `REDIS=aof` + `run.sh fault-redis` |
 | timer | 10.36 ms | 10.36 ms | 10.35 ms |
 | streams / readers / connections | 600 / 1 203 / 1 203 | 600 / 1 196 / 1 347 | 525 / 1 055 / 1 208 |
@@ -449,7 +449,7 @@ get a `404`". Three runs separate the two cases:
 
 - **Pause** (Redis alive but silent): appends wait, then complete; event latency peaks at 2.39 s
   in the window of the pause and is back under 40 ms in the next one
-  ([`fault-redis-pause-1.json`](stress-v0.1.0/raw/fault-redis-pause-1.json), windows 55–65 s).
+  ([`fault-redis-pause-1.json`](raw/fault-redis-pause-1.json), windows 55–65 s).
   Nothing is logged: the commands block instead of failing.
 - **Restart without persistence**: Redis comes back empty. The next heartbeat of each running
   producer finds its stream gone and cancels it (`stream vanished while running`, logged once or
@@ -478,8 +478,8 @@ that must survive Redis restarts needs persistence (AOF) or a replica.
 stored whoever writes it. The process is not resumed (§7, non-goals).
 
 **Command:** `make faults` → `run.sh fault-kill`: `docker kill deploy-app-1-1` (SIGKILL) at
-23:06:52.4, `docker start` 60 s later ([`fault-kill-1.fault.log`](stress-v0.1.0/raw/fault-kill-1.fault.log)).
-Timer 10.35 ms; 10.54 / 10.33 ms in the harness. [`fault-kill-1.txt`](stress-v0.1.0/raw/fault-kill-1.txt):
+23:06:52.4, `docker start` 60 s later ([`fault-kill-1.fault.log`](raw/fault-kill-1.fault.log)).
+Timer 10.35 ms; 10.54 / 10.33 ms in the harness. [`fault-kill-1.txt`](raw/fault-kill-1.txt):
 
 | criterion | result | pass |
 |---|---|---|
@@ -489,7 +489,7 @@ Timer 10.35 ms; 10.54 / 10.33 ms in the harness. [`fault-kill-1.txt`](stress-v0.
 | readers' events: gaps / duplicates / moved / restarted | 0 / 0 / 0 / 0 | PASS |
 | audited streams identical to the log | 585 of 585 | PASS |
 | HTTP errors | 3 `start` and 4 `GET` transport errors (see below); no 5xx | – |
-| app warnings or errors | only the 44 `producer lost` above ([`fault-kill-1.app-warnings.txt`](stress-v0.1.0/raw/fault-kill-1.app-warnings.txt)) | PASS |
+| app warnings or errors | only the 44 `producer lost` above ([`fault-kill-1.app-warnings.txt`](raw/fault-kill-1.app-warnings.txt)) | PASS |
 
 The 75 connections served by app-1 broke at the kill (`read_error`; nginx: `upstream prematurely
 closed connection`) and resumed through nginx on app-2. Readers of streams produced by app-2 went
@@ -501,7 +501,7 @@ matches what readers got).
 
 **What the kill does to nginx.** nginx keeps a dead upstream in its round-robin, and
 `deploy/nginx.conf` sets no `proxy_connect_timeout` (default 60 s)
-([`fault-kill-1.nginx-errors.txt`](stress-v0.1.0/raw/fault-kill-1.nginx-errors.txt)). Right after
+([`fault-kill-1.nginx-errors.txt`](raw/fault-kill-1.nginx-errors.txt)). Right after
 the kill, connects to app-1 were refused at once and nginx passed the requests to app-2. Once the
 killed container's address had gone, connects to it hung instead, until the kernel gave up with
 `Host is unreachable` (27 GET and 17 POST connects, logged at 23:07:40–49). Requests caught in
@@ -526,16 +526,16 @@ cancels the remaining ones and writes their `server_shutdown` terminals" (§3.1)
 **Commands:** `make faults` → `run.sh fault-stop` (`docker stop -t ${GRACE:-40}` at 60 s, `docker
 start` when it returns). The closed loop starts its streams in waves, so the time a stream has
 left at the signal depends on its length: three runs cover the three outcomes.
-A first run with 75 s streams ([`fault-stop-long-1`](stress-v0.1.0/raw/fault-stop-long-1.txt))
+A first run with 75 s streams ([`fault-stop-long-1`](raw/fault-stop-long-1.txt))
 still ended all 38 app-2 streams `done`, 26.6 s after SIGTERM, inside the grace; it was repeated
 with 150 s streams to reach the deadline.
 
-| | [30 s streams, grace 40 s](stress-v0.1.0/raw/fault-stop-1.txt) | [150 s streams, grace 40 s](stress-v0.1.0/raw/fault-stop-long-2.txt) | [30 s streams, grace 10 s](stress-v0.1.0/raw/fault-stop-grace10-1.txt) |
+| | [30 s streams, grace 40 s](raw/fault-stop-1.txt) | [150 s streams, grace 40 s](raw/fault-stop-long-2.txt) | [30 s streams, grace 10 s](raw/fault-stop-grace10-1.txt) |
 |---|---|---|---|
 | command | `run.sh fault-stop` | `FAULT_EVENTS=3000` | `GRACE=10` (Docker's default) |
 | timer | 10.31 ms | 10.35 ms | 10.36 ms |
 | app-2 streams running at SIGTERM | 38, all with < 30 s left | 37 with more than 30 s left | about 40, with about 10 s left |
-| what happened ([`*.shutdown.log`](stress-v0.1.0/raw/fault-stop-1.shutdown.log)) | the 38 ended `done` 11.3–11.6 s after SIGTERM; `srv.Shutdown` then waited 5 s for open responses; exit after 16.7 s | `hub closed at deadline`: the 37 were ended with `server_shutdown` 30.0 s after SIGTERM; exit 35.0 s after it | 9 ended `done` at 10.0–10.3 s; SIGKILL at 10 s; the 31 others ended `producer_lost`, written by readers on app-1 15.3–20.3 s after the kill |
+| what happened ([`*.shutdown.log`](raw/fault-stop-1.shutdown.log)) | the 38 ended `done` 11.3–11.6 s after SIGTERM; `srv.Shutdown` then waited 5 s for open responses; exit after 16.7 s | `hub closed at deadline`: the 37 were ended with `server_shutdown` 30.0 s after SIGTERM; exit 35.0 s after it | 9 ended `done` at 10.0–10.3 s; SIGKILL at 10 s; the 31 others ended `producer_lost`, written by readers on app-1 15.3–20.3 s after the kill |
 | streams / terminals | 600: 600 `done` | 150: 113 `done`, 37 `server_shutdown` | 569: 538 `done`, 31 `producer_lost` |
 | exactly one terminal per stream | yes | yes | yes |
 | readers' events: gaps / duplicates / moved / restarted | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
@@ -577,10 +577,10 @@ these streams add is `SLOW_AFTER=1000000` (the same 6 streams, read without paus
 
 | run | normal streams / readers | ev/s | event latency p50 / p95 / p99 / max ms | slow readers released | slow streams | integrity | pass |
 |---|---|---|---|---|---|---|---|
-| [slow-control-1](stress-v0.1.0/raw/slow-control-1.txt) (no large streams) | 900 / 1 787 | 2 859 | 2.3 / 8.9 / 41.9 / 131 | – | – | 0 | PASS |
-| [slow-heavy-control-1](stress-v0.1.0/raw/slow-heavy-control-1.txt) (large streams, read normally) | 900 / 1 806 | 2 798 | 2.9 / 23.6 / 84.9 / 336 | – | 6 `done`, 6 connections | 0 | PASS |
-| [slow-3](stress-v0.1.0/raw/slow-3.txt) (large streams, readers paused) | 825 / 1 693 | 2 771 | 4.6 / 38.3 / 96.5 / 321 | 6 of 6 | 6 `done`, 12 connections | 0 | PASS |
-| [slow-2](stress-v0.1.0/raw/slow-2.txt) (same as slow-3) | 825 / 1 660 | 2 723 | 2.3 / 34.6 / 117.4 / 2 939 | 6 of 6 | 6 `done`, 12 connections | 0 | PASS (see below) |
+| [slow-control-1](raw/slow-control-1.txt) (no large streams) | 900 / 1 787 | 2 859 | 2.3 / 8.9 / 41.9 / 131 | – | – | 0 | PASS |
+| [slow-heavy-control-1](raw/slow-heavy-control-1.txt) (large streams, read normally) | 900 / 1 806 | 2 798 | 2.9 / 23.6 / 84.9 / 336 | – | 6 `done`, 6 connections | 0 | PASS |
+| [slow-3](raw/slow-3.txt) (large streams, readers paused) | 825 / 1 693 | 2 771 | 4.6 / 38.3 / 96.5 / 321 | 6 of 6 | 6 `done`, 12 connections | 0 | PASS |
+| [slow-2](raw/slow-2.txt) (same as slow-3) | 825 / 1 660 | 2 723 | 2.3 / 34.6 / 117.4 / 2 939 | 6 of 6 | 6 `done`, 12 connections | 0 | PASS (see below) |
 
 Timers: `timercheck` 10.33, 10.37, 10.40 and 10.27 ms; harness 10.31–10.43 ms.
 
@@ -597,13 +597,13 @@ Timers: `timercheck` 10.33, 10.37, 10.40 and 10.27 ms; harness 10.31–10.43 ms.
   84.9 ms) is Redis absorbing 288 MiB in about 8 s, whether their readers pause or not. The
   pausing readers do add one burst: when they resume at about 70 s they read their 48 MiB backlog
   at once (windowed p99 151 ms in slow-3, against 51 ms in the heavy control at that time,
-  [`slow-3.json`](stress-v0.1.0/raw/slow-3.json)). The closed loop starts its streams in waves of
+  [`slow-3.json`](raw/slow-3.json)). The closed loop starts its streams in waves of
   75: 825 against 900 normal streams is 11 against 12 waves in the 4 minutes, so events/s is the
   figure to compare.
 - **One unexplained stall in slow-2.** In the window ending 20 s after the start, every stream of
   slow-2 stalled for about 2.9 s (windowed p99 2 919 ms, 756 events/s), with Redis at 131 % CPU and
   418 MB of earlier runs' streams still retained in it. slow-1 (the same test, before the harness
-  fix of §10) and slow-3 (the same test on an empty Redis, [`slow-3.redis-before.txt`](stress-v0.1.0/raw/slow-3.redis-before.txt))
+  fix of §10) and slow-3 (the same test on an empty Redis, [`slow-3.redis-before.txt`](raw/slow-3.redis-before.txt))
   show no such stall in that window (windowed p99 60 and 122 ms). It did not recur; its cause was
   not found. No integrity check failed during it.
 

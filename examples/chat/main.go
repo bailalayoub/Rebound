@@ -19,7 +19,7 @@
 //	FAKE_REPEAT     times the fake model repeats its answer (default 2, about a minute)
 //	CONFORMANCE     1 mounts the test-only producers: POST /conformance/streams for the conformance
 //	                tester (docs/06) and POST /loadtest/streams for the load harness
-//	                (docs/STRESS-v0.1.0.md); off by default: they let anyone start large producers
+//	                (docs/benchmarks/v0.1.0); off by default: they let anyone start large producers
 //	DEBUG_ADDR      a loopback address such as 127.0.0.1:6060 serves pprof and expvar
 //	                (/debug/pprof/, /debug/vars) for the load harness; off by default
 //

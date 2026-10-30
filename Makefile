@@ -9,7 +9,7 @@ GOFUMPT_VERSION ?= v0.12.0
 GOIMPORTS_VERSION ?= v0.52.0
 GOVULNCHECK_VERSION ?= v1.8.0
 
-.PHONY: help tidy fmt fmt-check vet lint test test-race test-integration cover check \
+.PHONY: help tidy fmt fmt-check vet lint test test-race redis-up redis-down test-integration cover check \
         no-sleep-check conformance conformance-redis client-build client-test demo demo-redis \
         readme-check tools ci playground playground-down         stress-up stress-down load load-baseline soak spike storm faults slow
 
@@ -44,14 +44,20 @@ test: ## Unit tests
 test-race: ## Unit tests with the race detector (what CI runs)
 	$(GO) test -race -count=1 ./...
 
-test-integration: ## Integration tests (needs Redis at $(REDIS_ADDR) and a cluster-mode Redis at $(REDIS_CLUSTER_ADDR))
+redis-up: ## Start the Redis and the one-node Redis Cluster the integration tests use
+	docker compose -f scripts/dev-redis.yml up -d
+
+redis-down: ## Stop them
+	docker compose -f scripts/dev-redis.yml down
+
+test-integration: ## Integration tests (needs Redis at $(REDIS_ADDR) and a cluster-mode Redis at $(REDIS_CLUSTER_ADDR), see redis-up)
 	REDIS_ADDR=$(REDIS_ADDR) REDIS_CLUSTER_ADDR=$(REDIS_CLUSTER_ADDR) $(GO) test -race -count=1 -timeout 20m -tags=integration ./...
 
 no-sleep-check: ## Forbid time.Sleep in unit tests (integration files excluded)
 	@bad=$$(grep -rln --include='*_test.go' 'time\.Sleep' . | xargs -r grep -L 'go:build integration' || true); \
 	if [ -n "$$bad" ]; then echo "time.Sleep found in unit tests:"; echo "$$bad"; exit 1; fi
 
-cover: ## Coverage with per-package thresholds (see docs/07)
+cover: ## Coverage with per-package thresholds (see docs/project/code-standards.md)
 	$(GO) test -race -count=1 -coverprofile=coverage.out -covermode=atomic $(PKGS)
 	@$(GO) tool cover -func=coverage.out | tail -n 1
 	@./scripts/coverage-gate.sh coverage.out
@@ -96,14 +102,14 @@ playground-down: ## Stop and remove the playground containers
 demo-redis: client-build ## Run the multi-instance demo
 	docker compose -f deploy/docker-compose.yml up --build
 
-readme-check: ## The README quick start is examples/readme-check/main.go, and it builds in a fresh module
-	@awk '/<!-- quickstart:start -->/{f=1;next} /<!-- quickstart:end -->/{f=0} f' README.md | sed '1d;$$d' 		| diff -u - examples/readme-check/main.go || (echo "README quick start differs from examples/readme-check/main.go"; exit 1)
+readme-check: ## The README quick start is examples/quickstart/main.go, and it builds in a fresh module
+	@awk '/<!-- quickstart:start -->/{f=1;next} /<!-- quickstart:end -->/{f=0} f' README.md | sed '1d;$$d' 		| diff -u - examples/quickstart/main.go || (echo "README quick start differs from examples/quickstart/main.go"; exit 1)
 	@# Follow the README in a module outside this one; the replace stands in for the published module.
-	@tmp=$$(mktemp -d) && trap 'rm -rf "$$tmp"' EXIT && cp examples/readme-check/main.go "$$tmp/" && cd "$$tmp" 		&& $(GO) mod init example.com/chat >/dev/null 2>&1 		&& $(GO) mod edit -require=github.com/bailalayoub/rebound@v0.0.0 -replace=github.com/bailalayoub/rebound=$(CURDIR) 		&& $(GO) mod tidy >/dev/null 2>&1 		&& $(GO) build -o /dev/null . && echo "readme-check: OK (fresh module: go mod tidy, go build)"
+	@tmp=$$(mktemp -d) && trap 'rm -rf "$$tmp"' EXIT && cp examples/quickstart/main.go "$$tmp/" && cd "$$tmp" 		&& $(GO) mod init example.com/chat >/dev/null 2>&1 		&& $(GO) mod edit -require=github.com/bailalayoub/rebound@v0.0.0 -replace=github.com/bailalayoub/rebound=$(CURDIR) 		&& $(GO) mod tidy >/dev/null 2>&1 		&& $(GO) build -o /dev/null . && echo "readme-check: OK (fresh module: go mod tidy, go build)"
 
-# Stress campaign (docs/STRESS-v0.1.0.md): never part of check or ci. Each target runs
+# Stress campaign (docs/benchmarks/v0.1.0/README.md): never part of check or ci. Each target runs
 # cmd/rebound-load in a container against the deploy/ stack and keeps its outputs under
-# docs/stress-v0.1.0/raw. The harness is built without -race: these are throughput measurements.
+# docs/benchmarks/v0.1.0/raw. The harness is built without -race: these are throughput measurements.
 STRESS := ./scripts/stress/run.sh
 
 stress-up: ## Stress: start deploy/ with the stress overlay (CPU pinning, DEBUG_ADDR)

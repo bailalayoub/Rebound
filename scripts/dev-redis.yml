@@ -1,4 +1,5 @@
-# Local development: a Redis for integration tests. The multi-instance demo lives in deploy/.
+# Local development: a Redis and a one-node Redis Cluster for the integration tests (make redis-up).
+# The multi-instance demo lives in deploy/.
 services:
   redis:
     image: redis:7-alpine

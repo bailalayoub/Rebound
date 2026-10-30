@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Per-package coverage thresholds (docs/07-code-standards.md). Usage: coverage-gate.sh coverage.out
+# Per-package coverage thresholds (docs/project/code-standards.md). Usage: coverage-gate.sh coverage.out
 # Statement-weighted: the same percentage `go test -cover` prints for each package.
 set -euo pipefail
 profile="${1:-coverage.out}"
