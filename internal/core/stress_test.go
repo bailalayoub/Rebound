@@ -1,4 +1,4 @@
-package rebound
+package core
 
 // Adversarial tests: many concurrent readers at the replay/live boundary, terminal races, Close
 // under load, goroutine leaks and large events, on every store. Regression tests for specific

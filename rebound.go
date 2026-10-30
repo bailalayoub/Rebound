@@ -1,37 +1,27 @@
+// Package rebound makes Server-Sent Events streams resumable.
+//
+// A Hub starts a producer (for example an LLM call) in a goroutine that is detached from any HTTP
+// request. The producer appends events to a Store, which numbers them densely from 1. Readers
+// subscribe after a cursor — the SSE Last-Event-ID — and receive exactly the events they missed,
+// then keep following live, because replay and live delivery read the same log. A client can
+// disconnect, reload, or reconnect to another server instance (with the Redis store) and still
+// end up with the complete, ordered sequence of events.
+//
+// Guarantees (docs/02-spec.md §2): ordering, no gap and no duplicate, producer independence from
+// connections, instance independence, guaranteed termination, bounded resources and an idempotent
+// terminal event.
+//
+// HTTP handlers live in package httpx (net/http) and ginx (Gin); storage backends in store/memory
+// and store/redis. This package is the public API; the implementation is in internal/core
+// (ADR 0009).
 package rebound
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
-	"errors"
-	"fmt"
-	"maps"
-	"slices"
-	"sync"
-	"time"
 
+	"github.com/bailalayoub/rebound/internal/core"
 	"github.com/bailalayoub/rebound/store"
 )
-
-const (
-	// maxIDAttempts bounds retries when a generated id collides (spec: max 3).
-	maxIDAttempts = 3
-	// maxStreamIDLen bounds stream ids, which travel in URLs and Redis keys.
-	maxStreamIDLen = 128
-	// readBatch is how many events a Subscription fetches per store read.
-	readBatch = 64
-	// maxReadBlock caps one blocking store read, so liveness is re-checked regularly.
-	maxReadBlock = 5 * time.Second
-	// shutdownWriteTimeout bounds the server_shutdown writes Close makes at its deadline (ADR 0006).
-	shutdownWriteTimeout = time.Second
-	// maxShutdownWriters bounds how many of those writes run at once.
-	maxShutdownWriters = 32
-)
-
-// Status is a snapshot of a stream: state, error code, retained range, cancellation, timing and
-// metadata.
-type Status = store.Status
 
 // ProducerFunc generates a stream's events through w. It runs in its own goroutine, detached from
 // the request that started it: ctx is cancelled only by Cancel, MaxDuration or Close. Returning nil
@@ -61,144 +51,39 @@ type Stream struct{ ID string }
 
 // Hub starts producers and serves subscriptions over a Store. It is safe for concurrent use.
 // Several Hubs may share one Store (for example Redis), on one or several instances.
-type Hub struct {
-	store     store.Store
-	cfg       config
-	readBlock time.Duration
-
-	mu        sync.Mutex
-	closed    bool
-	producers map[string]*producer // producers running on this Hub
-	wg        sync.WaitGroup       // one per producer; Add only under mu while !closed
-}
+type Hub struct{ core *core.Hub }
 
 // New returns a Hub over s, configured by opts.
 func New(s store.Store, opts ...Option) (*Hub, error) {
-	if s == nil {
-		return nil, errors.New("rebound: New: nil store")
-	}
-	cfg := defaultConfig()
-	for _, opt := range opts {
-		if err := opt(&cfg); err != nil {
-			return nil, err
-		}
-	}
-	if err := cfg.validate(); err != nil {
+	h, err := core.New(s, opts...)
+	if err != nil {
 		return nil, err
 	}
-	return &Hub{
-		store:     s,
-		cfg:       cfg,
-		readBlock: min(cfg.staleAfter/3, maxReadBlock),
-		producers: make(map[string]*producer),
-	}, nil
+	return &Hub{core: h}, nil
 }
 
 // Start creates a stream and runs produce in a new goroutine. It returns as soon as the stream
 // exists in the store. The producer's context derives from ctx without its cancellation: ending
 // the request that called Start never stops the producer.
 func (h *Hub) Start(ctx context.Context, produce ProducerFunc, opts ...StartOption) (*Stream, error) {
-	if produce == nil {
-		return nil, errors.New("rebound: start: nil producer")
+	var p core.ProducerFunc
+	if produce != nil { // a nil producer is rejected by core
+		p = func(ctx context.Context, w core.Writer) error { return produce(ctx, w) }
 	}
-	var sc startConfig
-	for _, opt := range opts {
-		if err := opt(&sc); err != nil {
-			return nil, err
-		}
-	}
-	if h.isClosed() {
-		return nil, ErrHubClosed
-	}
-	maxDuration := h.cfg.maxDuration
-	if sc.maxDuration > 0 {
-		maxDuration = sc.maxDuration
-	}
-	meta := store.Meta{
-		CreatedAt: h.cfg.clock.Now(),
-		IdleTTL:   h.cfg.idleTTL, // heartbeats refresh it, so it need not cover MaxDuration
-		Retention: h.cfg.retention,
-		MaxEvents: h.cfg.maxEvents,
-		Attrs:     sc.meta,
-	}
-	id, err := h.create(ctx, sc.id, meta)
+	st, err := h.core.Start(ctx, p, opts...)
 	if err != nil {
 		return nil, err
 	}
-
-	base := context.WithoutCancel(ctx)
-	pctx, cancel := context.WithCancelCause(base)
-	p := &producer{id: id, cancel: cancel}
-	if !h.register(p) {
-		// Close won the race after the stream was created: end it rather than leave it running.
-		cancel(errShutdown)
-		h.writeTerminal(base, id, errorEvent(codeServerShutdown, ""))
-		return nil, ErrHubClosed
-	}
-	h.hookStreamStart(id)
-	h.cfg.logger.Info("rebound: stream started", "stream_id", id)
-	go h.run(base, pctx, p, produce, maxDuration)
-	return &Stream{ID: id}, nil
-}
-
-// create registers the stream, retrying generated ids that collide.
-func (h *Hub) create(ctx context.Context, customID string, meta store.Meta) (string, error) {
-	if customID != "" {
-		if err := h.store.Create(ctx, customID, meta); err != nil {
-			return "", fmt.Errorf("rebound: start %s: %w", customID, err)
-		}
-		return customID, nil
-	}
-	var err error
-	for range maxIDAttempts {
-		var id string
-		if id, err = h.cfg.idGen(); err != nil {
-			return "", fmt.Errorf("rebound: start: generate id: %w", err)
-		}
-		if err = validateStreamID(id); err != nil {
-			return "", fmt.Errorf("rebound: start: generated id: %w", err)
-		}
-		if err = h.store.Create(ctx, id, meta); err == nil {
-			return id, nil
-		}
-		if !errors.Is(err, ErrExists) {
-			return "", fmt.Errorf("rebound: start %s: %w", id, err)
-		}
-	}
-	return "", fmt.Errorf("rebound: start: %d generated ids collided: %w", maxIDAttempts, err)
+	return &Stream{ID: st.ID}, nil
 }
 
 // Cancel asks the stream's producer to stop. It is idempotent and succeeds on finished streams.
 // The producer notices within HeartbeatInterval (immediately when it runs on this Hub), then the
 // stream ends with error "cancelled".
-func (h *Hub) Cancel(ctx context.Context, id string) error {
-	if err := checkID(id); err != nil {
-		return fmt.Errorf("rebound: cancel: %w", err)
-	}
-	if err := h.store.Cancel(ctx, id); err != nil {
-		return fmt.Errorf("rebound: cancel %s: %w", id, err)
-	}
-	h.mu.Lock()
-	p := h.producers[id]
-	h.mu.Unlock()
-	if p != nil {
-		p.cancel(ErrCancelled)
-	}
-	h.cfg.logger.Info("rebound: stream cancel requested", "stream_id", id, "local", p != nil)
-	return nil
-}
+func (h *Hub) Cancel(ctx context.Context, id string) error { return h.core.Cancel(ctx, id) }
 
 // Status returns a snapshot of the stream.
-func (h *Hub) Status(ctx context.Context, id string) (Status, error) {
-	if err := checkID(id); err != nil {
-		return Status{}, fmt.Errorf("rebound: status: %w", err)
-	}
-	st, err := h.store.Status(ctx, id)
-	if err != nil {
-		return Status{}, fmt.Errorf("rebound: status %s: %w", id, err)
-	}
-	return st, nil
-}
+func (h *Hub) Status(ctx context.Context, id string) (Status, error) { return h.core.Status(ctx, id) }
 
 // Close stops accepting Start (ErrHubClosed) and waits for the producers running on this Hub to
 // finish. If ctx is done first, the remaining producers are cancelled, their streams end with
@@ -206,109 +91,92 @@ func (h *Hub) Status(ctx context.Context, id string) (Status, error) {
 // error wrapping ctx.Err(). A producer that ignores its context is abandoned one
 // HeartbeatInterval later and stops heartbeating, but its goroutine runs until it returns; close
 // the store only after that if it may still write (its writes then fail with ErrClosed).
-func (h *Hub) Close(ctx context.Context) error {
-	h.mu.Lock()
-	h.closed = true
-	h.mu.Unlock()
+func (h *Hub) Close(ctx context.Context) error { return h.core.Close(ctx) }
 
-	finished := make(chan struct{})
-	go func() {
-		h.wg.Wait()
-		close(finished)
-	}()
-	select {
-	case <-finished:
-		h.cfg.logger.Info("rebound: hub closed")
-		return nil
-	case <-ctx.Done():
+// Subscribe returns a Subscription to the events of stream id with Seq > afterSeq; 0 means from
+// the beginning. It fails with ErrNotFound for unknown, expired or malformed ids, ErrInvalidCursor
+// if afterSeq is beyond the last event, and ErrGap if a store trimmed the events right after
+// afterSeq (only possible on a terminal stream, ADR 0004).
+func (h *Hub) Subscribe(ctx context.Context, id string, afterSeq uint64) (*Subscription, error) {
+	s, err := h.core.Subscribe(ctx, id, afterSeq)
+	if err != nil {
+		return nil, err
 	}
-
-	h.mu.Lock()
-	remaining := slices.Collect(maps.Values(h.producers))
-	h.mu.Unlock()
-	for _, p := range remaining {
-		p.cancel(errShutdown)
-	}
-	h.endAtShutdown(ctx, remaining)
-	h.cfg.logger.Warn("rebound: hub closed at deadline", "reason", codeServerShutdown, "streams", len(remaining))
-	return fmt.Errorf("rebound: close: %d producers still running were ended with %s: %w",
-		len(remaining), codeServerShutdown, ctx.Err())
+	return &Subscription{core: s}, nil
 }
 
-// endAtShutdown writes the server_shutdown terminals of ps concurrently, all within
-// shutdownWriteTimeout: Close must not outlive its deadline by more, whatever the store does.
-// A stream whose write does not finish in time is still ended by its own producer goroutine.
-func (h *Hub) endAtShutdown(ctx context.Context, ps []*producer) {
-	wctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), shutdownWriteTimeout)
-	defer cancel()
-	slots := make(chan struct{}, maxShutdownWriters)
-	var wg sync.WaitGroup
-	for _, p := range ps {
-		wg.Go(func() {
-			select {
-			case slots <- struct{}{}:
-				defer func() { <-slots }()
-				h.writeTerminal(wctx, p.id, errorEvent(codeServerShutdown, ""))
-			case <-wctx.Done():
-			}
-		})
-	}
-	wg.Wait()
-}
+// Subscription delivers a stream's events strictly after a cursor, replayed or live alike, up to
+// and including the terminal event. One goroutine calls Next; Close may be called from any
+// goroutine to stop it.
+type Subscription struct{ core *core.Subscription }
 
-func (h *Hub) isClosed() bool {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-	return h.closed
-}
+// Next blocks until the next event is available or ctx is done. After it has delivered the
+// terminal event ("done" or "error") it returns io.EOF, and only then: no other error matches
+// io.EOF. While waiting, it ends a stream whose producer showed no activity for StaleAfter with
+// error "producer_lost".
+func (s *Subscription) Next(ctx context.Context) (Event, error) { return s.core.Next(ctx) }
 
-// register records a local producer unless the Hub is closed.
-func (h *Hub) register(p *producer) bool {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-	if h.closed {
-		return false
-	}
-	h.producers[p.id] = p
-	h.wg.Add(1)
-	return true
-}
+// Close ends the subscription and interrupts a Next in progress. It is idempotent. The stream
+// itself is unaffected.
+func (s *Subscription) Close() error { return s.core.Close() }
 
-func (h *Hub) unregister(id string) {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-	delete(h.producers, id)
-}
+// Event is one entry of a stream: a dense sequence number, a kind and an opaque payload.
+type Event = store.Event
 
-// randomID returns 16 bytes from crypto/rand, base64url-encoded (22 characters).
-func randomID() (string, error) {
-	var b [16]byte
-	if _, err := rand.Read(b[:]); err != nil {
-		return "", err
-	}
-	return base64.RawURLEncoding.EncodeToString(b[:]), nil
-}
+// Status is a snapshot of a stream: state, error code, retained range, cancellation, timing and
+// metadata.
+type Status = store.Status
 
-// checkID answers ErrNotFound for ids that no stream can have, without calling the store
-// (ADR 0008): they come from URLs and would otherwise become store keys.
-func checkID(id string) error {
-	if validateStreamID(id) != nil {
-		return fmt.Errorf("malformed id %.40q: %w", id, ErrNotFound)
-	}
-	return nil
-}
+// State is the lifecycle state of a stream: running, done or error.
+type State = store.State
 
-// validateStreamID accepts 1–128 URL-safe characters (RFC 3986 unreserved), which are also safe
-// inside Redis hash tags.
-func validateStreamID(id string) error {
-	if id == "" || len(id) > maxStreamIDLen {
-		return fmt.Errorf("rebound: invalid stream id %q: length must be 1-%d", id, maxStreamIDLen)
-	}
-	for i := range len(id) {
-		c := id[i]
-		if !isLower(c) && !isDigit(c) && (c < 'A' || c > 'Z') && c != '-' && c != '_' && c != '.' && c != '~' {
-			return fmt.Errorf("rebound: invalid stream id %q: only [A-Za-z0-9._~-] allowed", id)
-		}
-	}
-	return nil
-}
+// Stream states.
+const (
+	StateRunning = store.StateRunning
+	StateDone    = store.StateDone
+	StateError   = store.StateError
+)
+
+// IsTerminal reports whether kind ends a stream ("done" or "error").
+func IsTerminal(kind string) bool { return store.IsTerminal(kind) }
+
+// Clock is the Hub's time source, injected with WithClock for deterministic tests.
+type Clock = store.Clock
+
+// Timer is the timer returned by Clock.NewTimer.
+type Timer = store.Timer
+
+// Ticker is the ticker returned by Clock.NewTicker.
+type Ticker = store.Ticker
+
+// Sentinel errors, matched with errors.Is. The first seven are declared by package store, because
+// every Store returns them (docs/adr/0002); they are the same values.
+var (
+	// ErrNotFound reports an unknown or expired stream id.
+	ErrNotFound = store.ErrNotFound
+	// ErrExists reports that a stream with the same id already exists.
+	ErrExists = store.ErrExists
+	// ErrClosed reports a write to a stream that already holds its terminal event.
+	ErrClosed = store.ErrClosed
+	// ErrCancelled reports a write to a cancelled stream.
+	ErrCancelled = store.ErrCancelled
+	// ErrGap reports a cursor older than the oldest retained event; only possible after a store
+	// trimmed a terminal stream (ADR 0004), and final for that reader.
+	ErrGap = store.ErrGap
+	// ErrTooManyEvents reports a write beyond MaxEvents; the stream ends with error
+	// "max_events_exceeded" (ADR 0004).
+	ErrTooManyEvents = store.ErrTooManyEvents
+	// ErrConflict reports an append whose expected sequence number does not match the log
+	// (ADR 0005).
+	ErrConflict = store.ErrConflict
+
+	// ErrInvalidCursor reports a subscription cursor beyond the last event of the stream.
+	ErrInvalidCursor = core.ErrInvalidCursor
+	// ErrInvalidKind reports an event kind that is reserved or does not match
+	// ^[a-z][a-z0-9_]{0,31}$.
+	ErrInvalidKind = core.ErrInvalidKind
+	// ErrTooLarge reports event data larger than the maximum event size (64 KiB by default).
+	ErrTooLarge = core.ErrTooLarge
+	// ErrHubClosed reports a call on a Hub after Close.
+	ErrHubClosed = core.ErrHubClosed
+)

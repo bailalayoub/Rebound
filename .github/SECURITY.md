@@ -26,11 +26,11 @@ is published with credit to you, unless you prefer to stay anonymous.
 
 ## Scope
 
-In scope: the Go library (root package, `store/...`, `sse`, `httpx`, `ginx`), the conformance
+In scope: the Go library (root package and `internal/core`, `store/...`, `sse`, `httpx`, `ginx`), the conformance
 tester and the TypeScript client `@bailalayoub/rebound-client`. Examples of what matters: a reader
 receiving events of another stream, a crafted `Last-Event-ID` or stream id that crashes the server
 or exhausts its memory, a payload that breaks the SSE framing, secrets or payloads written to logs.
 
-`examples/chat`, `deploy/` and `playground/` are local demos without authentication, bound to
+`examples/chat`, `examples/deploy/` and `examples/playground/` are local demos without authentication, bound to
 127.0.0.1. Missing authentication there is by design, but a way to leak the playground's API key is
 in scope.

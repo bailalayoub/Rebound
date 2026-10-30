@@ -1,4 +1,4 @@
-package rebound
+package core
 
 // Regression tests for defects found in the pre-release review of v0.1.0. Each one failed before
 // its fix; the comments point to the ADR that records the decision when there is one.

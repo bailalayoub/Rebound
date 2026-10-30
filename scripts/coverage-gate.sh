@@ -6,6 +6,7 @@ profile="${1:-coverage.out}"
 module="github.com/bailalayoub/rebound"
 thresholds="
 $module 85
+$module/internal/core 85
 $module/store/memory 85
 $module/store/redis 85
 $module/sse 90

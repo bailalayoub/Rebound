@@ -1,6 +1,6 @@
 //go:build integration
 
-package rebound
+package core
 
 // Chaos regression tests against a real Redis (REDIS_ADDR; every test uses its own key prefix).
 // A TCP proxy in front of Redis simulates a restart (every connection dropped, new ones refused),
