@@ -1,6 +1,6 @@
 //go:build integration
 
-package rebound
+package core
 
 import (
 	"flag"

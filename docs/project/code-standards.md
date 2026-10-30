@@ -13,7 +13,7 @@
 - Keep functions short enough to read without scrolling; prefer a named helper to a comment that explains a block.
 
 ### Errors
-- Sentinels in `errors.go`; wrap with `fmt.Errorf("rebound: append %s: %w", id, err)`; match with `errors.Is`.
+- Sentinels in `internal/core/errors.go` (forwarded by the root `rebound.go`); wrap with `fmt.Errorf("rebound: append %s: %w", id, err)`; match with `errors.Is`.
 - Every error message starts with the package name (`rebound:`, `redis store:`) and says what was attempted.
 - Library code never logs *and* returns the same error; it returns. The Hub logs lifecycle events once, at the boundary.
 - Never ignore an error without a comment stating why it is safe (`// ErrClosed here means another writer won the terminal race (G7).`).
@@ -38,7 +38,7 @@
 - Golden files for wire formats (`sse/testdata/*.golden`), updated with `-update`.
 - Randomized tests take a `-seed` flag, print the seed on failure, default to a time-based seed.
 - Integration tests carry `//go:build integration` and read `REDIS_ADDR` (default `localhost:6379`).
-- Coverage thresholds enforced by `make cover`: `rebound` 85 %, `store/memory` 85 %, `store/redis` 85 %, `sse` 90 %, `httpx` 85 %, `ginx` 80 %. Tool packages (`cmd/`, `examples/`) are excluded.
+- Coverage thresholds enforced by `make cover`: `rebound` 85 %, `internal/core` 85 %, `store/memory` 85 %, `store/redis` 85 %, `sse` 90 %, `httpx` 85 %, `ginx` 80 %. Tool packages (`cmd/`, `examples/`) are excluded.
 - Example tests (`Example*`) for every public entry point users will copy: `New`, `Start`, `httpx`, `ginx`.
 
 ### Lint
