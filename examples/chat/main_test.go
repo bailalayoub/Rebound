@@ -174,9 +174,9 @@ func TestNewProvider(t *testing.T) {
 	assert.Equal(t, llm.Fake{Delay: time.Millisecond, Repeat: 1}, p)
 	// Fail fast, with a readable message, when the real provider is half configured.
 	_, err = newProvider(config{provider: "openai", llmURL: "https://api.openai.com/v1"})
-	require.EqualError(t, err, "chat: LLM_PROVIDER=openai needs LLM_API_KEY (any value for a local Ollama) and LLM_MODEL; see playground/.env.example")
+	require.EqualError(t, err, "chat: LLM_PROVIDER=openai needs LLM_API_KEY (any value for a local Ollama) and LLM_MODEL; see examples/playground/.env.example")
 	_, err = newProvider(config{provider: "openai", llmKey: "k", llmURL: "https://api.openai.com/v1"})
-	require.EqualError(t, err, "chat: LLM_PROVIDER=openai needs LLM_MODEL; see playground/.env.example")
+	require.EqualError(t, err, "chat: LLM_PROVIDER=openai needs LLM_MODEL; see examples/playground/.env.example")
 	_, err = newProvider(config{provider: "openai", llmModel: "m", llmURL: "https://api.openai.com/v1"})
 	require.ErrorContains(t, err, "needs LLM_API_KEY")
 	_, err = newProvider(config{provider: "openai", llmKey: "k", llmModel: "m", llmURL: "api.groq.com/openai/v1"})

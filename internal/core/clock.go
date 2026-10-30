@@ -1,4 +1,4 @@
-package rebound
+package core
 
 import "github.com/bailalayoub/rebound/store"
 

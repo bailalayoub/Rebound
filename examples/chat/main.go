@@ -13,7 +13,7 @@
 //	LLM_STREAM_USAGE  0 omits stream_options.include_usage, for providers that reject it
 //	                (default 1)
 //
-// See playground/.env.example for ready-made provider settings.
+// See examples/playground/.env.example for ready-made provider settings.
 //
 //	FAKE_DELAY_MS   pause between words of the fake model (default 120)
 //	FAKE_REPEAT     times the fake model repeats its answer (default 2, about a minute)
@@ -122,7 +122,7 @@ func newProvider(cfg config) (llm.Provider, error) {
 			missing = append(missing, "LLM_MODEL")
 		}
 		if len(missing) > 0 {
-			return nil, fmt.Errorf("chat: LLM_PROVIDER=openai needs %s; see playground/.env.example",
+			return nil, fmt.Errorf("chat: LLM_PROVIDER=openai needs %s; see examples/playground/.env.example",
 				strings.Join(missing, " and "))
 		}
 		if u, err := url.Parse(cfg.llmURL); err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {

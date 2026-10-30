@@ -29,7 +29,7 @@ users. It must stay small and readable; it is not a product.
 | `LLM_API_KEY`, `LLM_MODEL` | — | required with `openai` (startup fails with a readable message otherwise); the key is never logged or displayed |
 | `LLM_STREAM_USAGE` | `1` | `0` omits `stream_options.include_usage`, for providers that do not document it |
 | `INSTANCE_NAME` | hostname | shown in the UI so multi-instance demos are visible |
-| `CONFORMANCE` | off | `1` mounts the test-only `/conformance/streams` and `/loadtest/streams`; set by `make conformance` and `deploy/` |
+| `CONFORMANCE` | off | `1` mounts the test-only `/conformance/streams` and `/loadtest/streams`; set by `make conformance` and `examples/deploy/` |
 | `DEBUG_ADDR` | off | loopback address for expvar and pprof (`/debug/vars`, `/debug/pprof/`); a non-loopback address is refused |
 
 ### Structure
@@ -53,8 +53,8 @@ Event payloads produced by `/chat`: a first `meta` event `{"instance","provider"
 `llm_error` event `{"status","message","hint"}` precedes the terminal `error{producer_failed}`, so
 the UI can say why instead of stopping silently. `/healthz` also names the provider and model.
 
-`playground/` runs this example on a real model (OpenAI, Groq, OpenRouter, Gemini, Ollama) with two
-instances behind nginx; see `playground/README.md`.
+`examples/playground/` runs this example on a real model (OpenAI, Groq, OpenRouter, Gemini, Ollama) with two
+instances behind nginx; see `examples/playground/README.md`.
 
 ### UI behaviour (vanilla JS, no framework)
 
@@ -131,7 +131,7 @@ plus `README.md` and `LICENSE`; a `prepack` script builds, so `npm pack` / `npm 
 clean checkout always ship `dist/` (CI checks it). Publishing to npm is a manual step done by a
 maintainer; CI only runs a dry-run (`npm pack --dry-run`).
 
-## 3. Multi-instance deployment for the demo (`deploy/`)
+## 3. Multi-instance deployment for the demo (`examples/deploy/`)
 
 ```
 docker-compose.yml: redis:7, app-1, app-2 (same image, INSTANCE_NAME differs), nginx round-robin

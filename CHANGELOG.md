@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Repository layout** (no API change): CONTRIBUTING, SECURITY and CODE_OF_CONDUCT moved to
-  `.github/`, the dev Redis compose file to `scripts/dev-redis.yml` (`make redis-up`), the README
-  quick start fixture to `examples/quickstart`, the stress campaign to `docs/benchmarks/v0.1.0/`
-  and the maintainer notes to `docs/project/`. The README is now a short overview with a map of
-  the repository; the integration details moved to `docs/usage.md`, with an index in
-  `docs/README.md`.
+- **Repository layout** (no API change, nothing to do for users): the implementation of package
+  `rebound` and its unit tests moved to `internal/core`; the root keeps only the public API
+  (`rebound.go`, `options.go`) as a thin facade with the same names, signatures and docs
+  (ADR 0009). `deploy/` and `playground/` moved under `examples/`; CONTRIBUTING, SECURITY and
+  CODE_OF_CONDUCT to `.github/`; the dev Redis compose file to `scripts/dev-redis.yml`
+  (`make redis-up`); the README quick start fixture to `examples/quickstart`; the stress campaign
+  to `docs/benchmarks/v0.1.0/` and the maintainer notes to `docs/project/`. The README is now a
+  short overview with a map of the repository; the integration details moved to `docs/usage.md`,
+  with an index in `docs/README.md`.
 
 ## [0.1.0] - 2026-10-26
 

@@ -1,5 +1,5 @@
 # REDIS=aof: Redis with an append-only file fsynced on every write, so that a restart keeps the
-# streams (deploy/ runs Redis without persistence). Used by the fault-redis variant of the campaign.
+# streams (examples/deploy/ runs Redis without persistence). Used by the fault-redis variant of the campaign.
 services:
   redis:
     command: ["redis-server", "--save", "", "--appendonly", "yes", "--appendfsync", "always"]

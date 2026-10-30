@@ -25,6 +25,6 @@ LLM_PROVIDER=openai LLM_API_KEY=sk-… LLM_MODEL=gpt-6-luna go run ./examples/ch
 | `CONFORMANCE` | off | `1` mounts `POST /conformance/streams`, the test-only producer of `rebound-conformance`, and `POST /loadtest/streams`, the timestamped producer of `rebound-load` |
 | `DEBUG_ADDR` | off | a loopback address (e.g. `127.0.0.1:6060`) serving expvar (`/debug/vars`: goroutines, RSS, open fds, memstats) and pprof; refused if not loopback |
 
-Two instances behind nginx round-robin on one Redis: `docker compose -f deploy/docker-compose.yml up --build`
+Two instances behind nginx round-robin on one Redis: `docker compose -f examples/deploy/docker-compose.yml up --build`
 (listens on 127.0.0.1:8080). The same on a real model, with ready-made settings for OpenAI, Groq,
-OpenRouter, Gemini and Ollama and a list of manual tests: [`playground/`](../../playground).
+OpenRouter, Gemini and Ollama and a list of manual tests: [`examples/playground/`](../playground).

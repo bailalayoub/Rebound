@@ -1,7 +1,7 @@
 # Stress campaign — Rebound v0.1.0
 
 Load, endurance, spike, reconnection, fault and slow-client tests of Rebound v0.1.0 on the
-`deploy/` stack (Redis, two instances of `examples/chat`, nginx round-robin). Every figure below
+`examples/deploy/` stack (Redis, two instances of `examples/chat`, nginx round-robin). Every figure below
 comes from a file in [`raw/`](raw), written by the command named
 next to it. Nothing in the library, the spec, the public API or the Store contract was changed.
 
@@ -11,11 +11,11 @@ next to it. Nothing in the library, the spec, the public API or the Store contra
 Machine: one laptop (AMD Ryzen 5 4600H, 6 cores / 12 threads, 15.4 GB RAM, Windows 10, Docker
 Desktop with a 12-CPU, 7.45 GiB VM) running Redis 7.4, two instances and nginx 1.28 on CPUs 0–7 and
 the load generator on CPUs 8–11. No defect of the library was found; the failures are deployment
-settings of `deploy/` (§10).
+settings of `examples/deploy/` (§10).
 
 | test | criteria | result | pass |
 |---|---|---|---|
-| 1. Load ramp (§4) | zero gaps, zero duplicates, exactly one terminal per stream below the knee | **knee at 150 streams in flight** (1–3 readers each, 20 events/s per stream; about 5 300 events/s delivered), reproduced in two runs; Redis at one full core is the limit; integrity clean at every step up to 300 streams; one instance on the memory store: knee at 1 000 streams. With `deploy/nginx.conf` as shipped, nginx's 512 connections are the knee (150 streams) | PASS |
+| 1. Load ramp (§4) | zero gaps, zero duplicates, exactly one terminal per stream below the knee | **knee at 150 streams in flight** (1–3 readers each, 20 events/s per stream; about 5 300 events/s delivered), reproduced in two runs; Redis at one full core is the limit; integrity clean at every step up to 300 streams; one instance on the memory store: knee at 1 000 streams. With `examples/deploy/nginx.conf` as shipped, nginx's 512 connections are the knee (150 streams) | PASS |
 | 2. Soak, 2 h, 75 streams, 30 % of connections dropped (§5) | no upward trend after warm-up, goroutines and Redis keys back to baseline, zero gaps or duplicates | 25 275 streams, 21 178 drops resumed, 0 violations; Go heap, goroutines, fds, Redis flat; RSS +0.3 %/h in the second hour (R² ≈ 0.1); goroutines 7 → 7, Redis keys 0 → 0 | PASS |
 | 3. Spike, idle → 375 streams in 10 s → 75 (§6) | no crash, no lost stream, recovery to the baseline p99 | no crash, restart or lost stream; windowed p99 back inside the baseline band **35 s** after the spike | PASS |
 | 4. Reconnection storm, 2 runs + timed variant (§7) | zero gaps or duplicates, producer never restarted or moved; `X-Upstream` per resume | 95 757, 120 009 and 138 788 connections (about 1 000 and 2 300 resumes per reader), 49.9 % served by the instance not running the producer; 0 gaps, duplicates, moves or restarts | PASS |
@@ -25,7 +25,7 @@ settings of `deploy/` (§10).
 | 6. Slow clients (§9) | released by the per-write deadline; other streams unaffected | 6 of 6 released by `httpx: write timeout` and resumed without loss in each run; other streams on par with the heavy control (p99 96.5 vs 84.9 ms); one unexplained 2.9 s stall in one of three runs | PASS |
 | Tool verification (§3) | each checker can fail | gap, duplicate, missing terminal, differing terminals, moved, restarted, bad payload, not a prefix: each reported by the checker against a faulty fake server | PASS |
 
-Deployment findings, none applied (`deploy/` is not changed by this campaign): nginx's
+Deployment findings, none applied (`examples/deploy/` is not changed by this campaign): nginx's
 `events {}` caps the stack at about 100 streams; nginx has no `proxy_connect_timeout`, so a killed
 instance holds requests for tens of seconds; `docker-compose.yml` has no `stop_grace_period`, so
 Docker's 10 s cuts the example's 30 s drain; Redis runs without persistence.
@@ -43,14 +43,14 @@ main limit of these numbers (§11). From [`environment.txt`](raw/environment.txt
 | OS | Windows 10 Pro 10.0.19045, Docker Desktop 4.47 (engine 28.4.0, Compose 2.39.4), WSL2 kernel 5.15.153.1 |
 | Docker VM | 12 CPUs, 7 997 685 760 bytes |
 | Go | 1.26.0 (host, harness build), 1.26.9 (images and `-race` tests) |
-| Redis | 7.4.8 (`redis:7-alpine`), no persistence, as in `deploy/` |
+| Redis | 7.4.8 (`redis:7-alpine`), no persistence, as in `examples/deploy/` |
 | nginx | 1.28.3 (`nginx:1.28-alpine`) |
 | Rebound | `rebound-chat:dev` built from this branch (the library is v0.1.0 unchanged) |
 
 CPU pinning ([`scripts/stress/compose.yml`](../../../scripts/stress/compose.yml)): Redis, both instances
 and nginx on CPUs 0–7; the load generator on CPUs 8–11. Host port 8080 is held by another service
 on this machine, so the overlay publishes nginx on 127.0.0.1:18080; the generator reaches nginx on
-the compose network. Everything binds to 127.0.0.1; `CONFORMANCE=1` as in `deploy/`.
+the compose network. Everything binds to 127.0.0.1; `CONFORMANCE=1` as in `examples/deploy/`.
 
 **Timers.** Before every run `internal/timercheck -v` measures ten 10 ms timers in the VM (kept as
 `NAME.timer`); the harness measures them again at its start and end (`timer_10ms_*` in each
@@ -132,7 +132,7 @@ appears ([`knee.py`](knee.py) → [`knee.txt`](raw/knee.txt)).
 
 ### 4.1 nginx as shipped: the proxy is the knee
 
-[`ramp-1`](raw/ramp-1.txt) used `deploy/nginx.conf` unchanged. Its `events {}`
+[`ramp-1`](raw/ramp-1.txt) used `examples/deploy/nginx.conf` unchanged. Its `events {}`
 means one worker process with 512 connections, and a proxied request holds two (client and
 upstream). From the 200-stream step nginx logged `512 worker_connections are not enough`
 1 377 661 times ([`ramp-1.logs.txt`](raw/ramp-1.logs.txt)); clients saw transport
@@ -152,15 +152,15 @@ every stream still ended with exactly one terminal.
 | **150x1-3** | 4 867 | 81 % | 129.0 | 52 076.5 | 10 379 | 0 | knee |
 | 200x1-3 (ramp-1) | 4 720 | 59 % | 199.2 | 88 046.8 | 28 916 | 56 missing terminals | FAIL |
 
-**Finding (deployment, not library):** `deploy/nginx.conf` caps the demo stack at about 100
+**Finding (deployment, not library):** `examples/deploy/nginx.conf` caps the demo stack at about 100
 concurrent streams. Raising `worker_processes` and `worker_connections` is enough
-([`scripts/stress/nginx-tuned.conf`](../../../scripts/stress/nginx-tuned.conf)). `deploy/` is not
+([`scripts/stress/nginx-tuned.conf`](../../../scripts/stress/nginx-tuned.conf)). `examples/deploy/` is not
 changed by this campaign.
 
 ### 4.2 nginx limits raised: the knee of Rebound on Redis
 
 All other runs use `NGINX=tuned`: `worker_processes auto` (8 workers), `worker_connections 65536`;
-the `http` block is the one of `deploy/nginx.conf`, unchanged. Two fine ramps, same phases,
+the `http` block is the one of `examples/deploy/nginx.conf`, unchanged. Two fine ramps, same phases,
 different seeds ([`ramp-fine-1`](raw/ramp-fine-1.txt),
 [`ramp-fine-2`](raw/ramp-fine-2.txt)):
 
@@ -427,7 +427,7 @@ message, are in `NAME.app-warnings.txt`.
 **Spec.** The `Writer` "retries transient store errors for at most `StaleAfter / 2`" (7.5 s) and
 each event is stored exactly once (§3.1, ADR 0005); readers get 503 before headers or a closed
 connection after them, and retry (failure table of docs/03-architecture.md). The store contract assumes the log
-survives for `Retention`; `deploy/` runs Redis without persistence, and docs/how-it-works.md
+survives for `Retention`; `examples/deploy/` runs Redis without persistence, and docs/how-it-works.md
 already says that "a Redis without persistence that restarts loses in-flight streams, and clients
 get a `404`". Three runs separate the two cases:
 
@@ -467,7 +467,7 @@ get a `404`". Three runs separate the two cases:
   outage. `appendfsync always` costs throughput (2 478 vs 2 747 events/s, event latency p50 10.5
   vs 2.4 ms): fewer streams completed in the same 4 minutes.
 
-**Finding (deployment, not library):** with `deploy/`'s Redis (`--save "" --appendonly no`), a
+**Finding (deployment, not library):** with `examples/deploy/`'s Redis (`--save "" --appendonly no`), a
 Redis restart loses every stream in flight; clients get a `404` and no terminal. A deployment
 that must survive Redis restarts needs persistence (AOF) or a replica.
 
@@ -500,7 +500,7 @@ connection. Events of those streams written before the kill were all delivered (
 matches what readers got).
 
 **What the kill does to nginx.** nginx keeps a dead upstream in its round-robin, and
-`deploy/nginx.conf` sets no `proxy_connect_timeout` (default 60 s)
+`examples/deploy/nginx.conf` sets no `proxy_connect_timeout` (default 60 s)
 ([`fault-kill-1.nginx-errors.txt`](raw/fault-kill-1.nginx-errors.txt)). Right after
 the kill, connects to app-1 were refused at once and nginx passed the requests to app-2. Once the
 killed container's address had gone, connects to it hung instead, until the kernel gave up with
@@ -553,7 +553,7 @@ streams produced elsewhere, so the example exits with `chat: shutdown: context d
 (logged at ERROR) and those connections are cut; their readers resume on the other instance
 without a gap.
 
-**Finding (deployment):** `deploy/docker-compose.yml` sets no `stop_grace_period`, so `docker stop`
+**Finding (deployment):** `examples/deploy/docker-compose.yml` sets no `stop_grace_period`, so `docker stop`
 or `docker compose down` gives the example Docker's default 10 s, less than its 30 s hub grace:
 streams that need more than 10 s end with `producer_lost` (15 s later) instead of `done` or
 `server_shutdown`. A `stop_grace_period` above 35 s (hub grace + HTTP shutdown) lets the shutdown
@@ -616,14 +616,14 @@ No test revealed a defect in the library: in every run, every reader's events we
 ordered and from one producer run, every audited stream was byte-identical to what its readers
 received, and no event was stored twice. What failed or degraded has a measured cause outside it:
 
-| what | where | cause | fix (not applied: `deploy/` is out of scope) |
+| what | where | cause | fix (not applied: `examples/deploy/` is out of scope) |
 |---|---|---|---|
-| transport errors from 150 streams, missing terminals from 200 | Test 1, nginx as shipped (§4.1) | `deploy/nginx.conf` has `events {}`: one worker, 512 connections, two per proxied stream | `worker_processes auto`, `worker_connections` sized for the streams (as in `scripts/stress/nginx-tuned.conf`) |
+| transport errors from 150 streams, missing terminals from 200 | Test 1, nginx as shipped (§4.1) | `examples/deploy/nginx.conf` has `events {}`: one worker, 512 connections, two per proxied stream | `worker_processes auto`, `worker_connections` sized for the streams (as in `scripts/stress/nginx-tuned.conf`) |
 | delivery under 95 % of the offered rate from 150 streams | Test 1, the knee (§4.2) | Redis at one full core (single-threaded) | more Redis capacity (Cluster with `{id}` hash tags, faster cores); the knee scales with Redis, not with instances |
 | readers giving up at 1000–2000 streams | Test 1, beyond the knee (§4.2) | appends slowed by the saturated Redis until a stream outlasts the reader's deadline; the streams were complete | below the knee: none |
-| 75 streams lost, readers get 404 | Test 5, Redis restart as shipped (§8.1) | `deploy/` runs Redis without persistence; documented in docs/how-it-works.md | AOF (measured: no loss) or a replica |
+| 75 streams lost, readers get 404 | Test 5, Redis restart as shipped (§8.1) | `examples/deploy/` runs Redis without persistence; documented in docs/how-it-works.md | AOF (measured: no loss) or a replica |
 | requests delayed by tens of seconds, 3 failed starts | Test 5, `docker kill` (§8.2) | nginx keeps the dead upstream and has no `proxy_connect_timeout` (60 s default) | `proxy_connect_timeout 1s`–`2s` |
-| `producer_lost` instead of `done` or `server_shutdown` | Test 5, `docker stop` with Docker's default 10 s (§8.3) | no `stop_grace_period` in `deploy/docker-compose.yml`; the example needs up to 35 s | `stop_grace_period: 40s` |
+| `producer_lost` instead of `done` or `server_shutdown` | Test 5, `docker stop` with Docker's default 10 s (§8.3) | no `stop_grace_period` in `examples/deploy/docker-compose.yml`; the example needs up to 35 s | `stop_grace_period: 40s` |
 | starts answered 503 while an instance closes | Test 5, `docker stop` (§8.3) | `Hub.Close` refuses new `Start`s (spec §3.1); nginx forwards the 503 | the client retries the start, or nginx retries it on the other upstream (`proxy_next_upstream http_503 non_idempotent`, safe here because a refused start creates nothing) |
 | `chat: shutdown: context deadline exceeded` at ERROR | Test 5, `docker stop` (§8.3) | the example gives `srv.Shutdown` 5 s while readers of streams produced elsewhere stay connected; they resume without a gap | cosmetic; a longer HTTP shutdown or a lower level for this case |
 

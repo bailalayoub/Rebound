@@ -122,28 +122,27 @@ A full chat UI that survives reloads: `make demo`.
 
 ## Where to look
 
-Most people only need the first block. The Go files at the root are the library itself (Go keeps a
-package's code and its unit tests in the same folder, so they cannot move without changing the
-import path).
+```
+rebound.go, options.go   the public API: what you import (start here)
+internal/core/           the engine behind it, with its unit tests
+httpx/ ginx/             HTTP handlers for net/http and Gin
+store/                   where events live: memory/ (one instance) or redis/ (several)
+sse/                     SSE encoding and Last-Event-ID parsing
+clients/typescript/      browser/Node client that resumes by itself
+examples/                quickstart/, chat/ (web UI), deploy/ and playground/ (Docker)
+docs/                    how it works, spec, ADRs, benchmarks
+cmd/ internal/ scripts/  tooling: chaos tester, load tests, CI helpers (not needed to use it)
+```
 
-**The core: package `rebound`, at the root**
+**The library**
 
-| File | What it does |
+| Path | What it is |
 |---|---|
-| [`rebound.go`](rebound.go) | **Start here.** The `Hub`: `New`, `Start` (launch a generation), `Cancel`, `Status`, `Close` |
-| [`producer.go`](producer.go) | runs a generation: writes events, heartbeats, timeouts, retries, the final `done`/`error` |
-| [`subscription.go`](subscription.go) | reads a stream: replay from a cursor, then live, and detects a dead producer |
-| [`options.go`](options.go) | every `With…` option and its default |
-| [`errors.go`](errors.go), [`event.go`](event.go) | error values and codes; event kinds |
-| [`hooks.go`](hooks.go), [`clock.go`](clock.go), [`doc.go`](doc.go) | metrics callbacks, the `Clock` interface (faked in tests), package docs |
-| `*_test.go` | unit tests of the core; `*integration_test.go` need a real Redis |
-
-**Packages you plug in**
-
-| Folder | What it is |
-|---|---|
-| [`httpx/`](httpx) | net/http handlers: stream with `Last-Event-ID`, cancel |
-| [`ginx/`](ginx) | the same for Gin |
+| [`rebound.go`](rebound.go) | **Start here.** `New`, `Hub` (`Start`, `Subscribe`, `Cancel`, `Status`, `Close`), `Writer`, errors |
+| [`options.go`](options.go) | every `With…` option and its default, `Hooks` for metrics |
+| [`example_test.go`](example_test.go) | runnable examples, also shown on pkg.go.dev |
+| [`internal/core/`](internal/core) | the implementation: [`producer.go`](internal/core/producer.go) runs a generation (heartbeats, timeouts, retries, final `done`/`error`), [`subscription.go`](internal/core/subscription.go) reads one (replay, then live), and the unit tests (`*_test.go`; `*integration_test.go` need Redis) |
+| [`httpx/`](httpx), [`ginx/`](ginx) | HTTP handlers: stream with `Last-Event-ID`, cancel |
 | [`store/memory/`](store/memory) | in-process store: one instance, tests |
 | [`store/redis/`](store/redis) | Redis Streams store: several instances (Lua scripts in `lua/`) |
 | [`store/`](store), [`store/storetest/`](store/storetest) | the `Store` interface, and the test suite any store must pass |
@@ -156,15 +155,15 @@ import path).
 |---|---|
 | [`examples/quickstart/`](examples/quickstart) | the quick start above, as a file (CI checks they match) |
 | [`examples/chat/`](examples/chat) | a chat app with a web UI, fake or real model (`make demo`) |
-| [`deploy/`](deploy) | 2 instances + Redis + nginx round-robin, fake model, one `docker compose` |
-| [`playground/`](playground) | the same on a real LLM (OpenAI, Groq, OpenRouter, Gemini, Ollama) |
+| [`examples/deploy/`](examples/deploy) | 2 instances + Redis + nginx round-robin, fake model, one `docker compose` |
+| [`examples/playground/`](examples/playground) | the same on a real LLM (OpenAI, Groq, OpenRouter, Gemini, Ollama) |
 
 **Tooling: you can ignore it to use the library**
 
 | Folder | What it is |
 |---|---|
 | [`cmd/`](cmd) | `rebound-conformance` (chaos tester for any server speaking the protocol), `rebound-load` (stress harness) |
-| [`internal/`](internal) | test helpers, the conformance and load-test engines, repository checks |
+| [`internal/`](internal) | besides `core/`: test helpers, the conformance and load-test engines, repository checks |
 | [`scripts/`](scripts) | CI and Docker helpers, the dev Redis (`make redis-up`), the stress campaign |
 | [`docs/`](docs) | [how it works](docs/how-it-works.md), spec, architecture, ADRs, [benchmarks](docs/benchmarks/v0.1.0/README.md) |
 | [`.github/`](.github) | CI, issue templates, [CONTRIBUTING](.github/CONTRIBUTING.md), [SECURITY](.github/SECURITY.md) |
