@@ -82,8 +82,8 @@ jitter, never delivers an event twice, zero dependencies.
 ## Try it with a UI
 
 [`examples/chat`](../examples/chat) is a complete chat with a UI that survives reloads
-(`make demo`, fake model, no key). [`deploy/`](../deploy) runs two instances behind nginx
-round-robin on one Redis, and [`playground/`](../playground) runs the same on a real model (OpenAI,
+(`make demo`, fake model, no key). [`examples/deploy/`](../examples/deploy) runs two instances behind nginx
+round-robin on one Redis, and [`examples/playground/`](../examples/playground) runs the same on a real model (OpenAI,
 Groq, OpenRouter, Gemini or Ollama) with one `docker compose` command. These are local demos
 without authentication.
 

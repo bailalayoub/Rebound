@@ -73,10 +73,10 @@ conformance: ## Conformance tester against examples/chat with the memory store
 	./scripts/conformance-memory.sh
 
 conformance-redis: ## Conformance against 2 instances + redis + nginx (docker compose)
-	docker compose -f deploy/docker-compose.yml up -d --build
+	docker compose -f examples/deploy/docker-compose.yml up -d --build
 	./scripts/wait-for.sh http://localhost:8080/healthz 60
 	$(GO) run ./cmd/rebound-conformance --base-url http://localhost:8080 --runs 200
-	docker compose -f deploy/docker-compose.yml down
+	docker compose -f examples/deploy/docker-compose.yml down
 
 client-build: ## Build the TypeScript client and copy it into the example UI
 	cd clients/typescript && npm ci && npm run build
@@ -90,17 +90,17 @@ client-test: ## Test the TypeScript client, and check that the package ships its
 demo: client-build ## Run the example chat on :8080 (memory store, fake LLM)
 	$(GO) run ./examples/chat
 
-PLAYGROUND := docker compose -f playground/docker-compose.yml --env-file playground/.env
+PLAYGROUND := docker compose -f examples/playground/docker-compose.yml --env-file examples/playground/.env
 
-playground: ## Chat UI on a real LLM: 2 instances + Redis + nginx, settings in playground/.env (see playground/README.md)
-	@test -f playground/.env || (echo "playground/.env is missing: cp playground/.env.example playground/.env, then edit it"; exit 1)
+playground: ## Chat UI on a real LLM: 2 instances + Redis + nginx, settings in examples/playground/.env (see examples/playground/README.md)
+	@test -f examples/playground/.env || (echo "examples/playground/.env is missing: cp examples/playground/.env.example examples/playground/.env, then edit it"; exit 1)
 	$(PLAYGROUND) up --build
 
 playground-down: ## Stop and remove the playground containers
 	$(PLAYGROUND) down
 
 demo-redis: client-build ## Run the multi-instance demo
-	docker compose -f deploy/docker-compose.yml up --build
+	docker compose -f examples/deploy/docker-compose.yml up --build
 
 readme-check: ## The README quick start is examples/quickstart/main.go, and it builds in a fresh module
 	@awk '/<!-- quickstart:start -->/{f=1;next} /<!-- quickstart:end -->/{f=0} f' README.md | sed '1d;$$d' 		| diff -u - examples/quickstart/main.go || (echo "README quick start differs from examples/quickstart/main.go"; exit 1)
@@ -108,11 +108,11 @@ readme-check: ## The README quick start is examples/quickstart/main.go, and it b
 	@tmp=$$(mktemp -d) && trap 'rm -rf "$$tmp"' EXIT && cp examples/quickstart/main.go "$$tmp/" && cd "$$tmp" 		&& $(GO) mod init example.com/chat >/dev/null 2>&1 		&& $(GO) mod edit -require=github.com/bailalayoub/rebound@v0.0.0 -replace=github.com/bailalayoub/rebound=$(CURDIR) 		&& $(GO) mod tidy >/dev/null 2>&1 		&& $(GO) build -o /dev/null . && echo "readme-check: OK (fresh module: go mod tidy, go build)"
 
 # Stress campaign (docs/benchmarks/v0.1.0/README.md): never part of check or ci. Each target runs
-# cmd/rebound-load in a container against the deploy/ stack and keeps its outputs under
+# cmd/rebound-load in a container against the examples/deploy/ stack and keeps its outputs under
 # docs/benchmarks/v0.1.0/raw. The harness is built without -race: these are throughput measurements.
 STRESS := ./scripts/stress/run.sh
 
-stress-up: ## Stress: start deploy/ with the stress overlay (CPU pinning, DEBUG_ADDR)
+stress-up: ## Stress: start examples/deploy/ with the stress overlay (CPU pinning, DEBUG_ADDR)
 	$(STRESS) up
 
 stress-down: ## Stress: stop it

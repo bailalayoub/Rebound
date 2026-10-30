@@ -1,5 +1,5 @@
 # Multi-instance demo and conformance target: Redis, two chat instances, nginx round-robin on :8080.
-#   docker compose -f deploy/docker-compose.yml up -d --build
+#   docker compose -f examples/deploy/docker-compose.yml up -d --build
 services:
   redis:
     image: redis:7-alpine
@@ -12,8 +12,8 @@ services:
 
   app-1: &app
     build:
-      context: ..
-      dockerfile: deploy/Dockerfile
+      context: ../..
+      dockerfile: examples/deploy/Dockerfile
     image: rebound-chat:dev
     environment:
       REBOUND_STORE: redis

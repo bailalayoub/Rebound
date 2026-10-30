@@ -1,8 +1,8 @@
 # Playground: the example chat UI on a real LLM, two instances behind nginx round-robin, one Redis.
-# Settings come from playground/.env (copy .env.example; never commit .env). From the repo root:
+# Settings come from examples/playground/.env (copy .env.example; never commit .env). From the repo root:
 #
-#   docker compose -f playground/docker-compose.yml --env-file playground/.env up --build
-#   docker compose -f playground/docker-compose.yml --env-file playground/.env down
+#   docker compose -f examples/playground/docker-compose.yml --env-file examples/playground/.env up --build
+#   docker compose -f examples/playground/docker-compose.yml --env-file examples/playground/.env down
 #
 # The UI listens on http://localhost:${DEMO_PORT} (default 8090), on this machine only.
 name: rebound-playground
@@ -19,8 +19,8 @@ services:
 
   app-1: &app
     build:
-      context: ..
-      dockerfile: deploy/Dockerfile # the example chat image, as in deploy/
+      context: ../..
+      dockerfile: examples/deploy/Dockerfile # the example chat image, as in examples/deploy/
     image: rebound-chat:playground
     env_file: .env # LLM_PROVIDER, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL, REBOUND_STORE…
     environment:

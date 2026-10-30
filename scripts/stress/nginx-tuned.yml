@@ -4,7 +4,7 @@
 services:
   nginx:
     volumes: !override
-      # Relative to deploy/, the directory of the first compose file.
-      - ../scripts/stress/nginx-tuned.conf:/etc/nginx/nginx.conf:ro
+      # Relative to examples/deploy/, the directory of the first compose file.
+      - ../../scripts/stress/nginx-tuned.conf:/etc/nginx/nginx.conf:ro
     ulimits:
       nofile: 200000

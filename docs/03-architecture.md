@@ -27,15 +27,18 @@ Three roles, one log:
 
 ```
 rebound/
-├── rebound.go              # Hub, Start, Subscribe, Cancel, Status, Close
-├── producer.go            # producer goroutine: detached ctx, heartbeat, timeout, terminal write
-├── subscription.go        # Subscription.Next: read loop, stale detection, EOF
-├── event.go               # Event, Kind validation, terminal helpers
-├── options.go             # Option / StartOption, defaults
-├── errors.go              # sentinel errors
-├── clock.go               # Clock alias of store.Clock (ADR 0002)
-├── hooks.go               # Hooks struct
-├── doc.go                 # package documentation + runnable Example tests in example_test.go
+├── rebound.go             # public API: Hub, Subscription, Writer, Stream, types, sentinel errors
+├── options.go             # public API: Option / StartOption, every With… option, Hooks
+├── example_test.go        # runnable examples (pkg.go.dev); rebound_test.go tests the facade
+├── internal/core/         # the implementation of package rebound, with its unit tests (ADR 0009)
+│   ├── rebound.go         # Hub, Start, Subscribe, Cancel, Status, Close
+│   ├── producer.go        # producer goroutine: detached ctx, heartbeat, timeout, terminal write
+│   ├── subscription.go    # Subscription.Next: read loop, stale detection, EOF
+│   ├── event.go           # Kind validation, terminal helpers
+│   ├── options.go         # Option / StartOption, defaults
+│   ├── errors.go          # sentinel errors
+│   ├── clock.go           # Clock alias of store.Clock (ADR 0002)
+│   └── hooks.go           # Hooks struct
 ├── store/
 │   ├── store.go           # Store interface, Meta, AppendRequest
 │   ├── types.go           # Event, State, Status, IsTerminal, Clock, store sentinels (ADR 0002)
@@ -50,14 +53,17 @@ rebound/
 ├── internal/conformance/  # conformance contract: test producer (server side) and chaos tester engine
 ├── cmd/rebound-conformance/# chaos tester (docs/06)
 ├── examples/chat/         # Gin chat app + fake/OpenAI-compatible LLM + web UI (docs/08)
+├── examples/deploy/       # docker-compose for redis, 2 app instances, nginx round-robin
+├── examples/playground/   # the same on a real LLM
 ├── clients/typescript/    # @bailalayoub/rebound-client: fetch-based resumable SSE client
-├── deploy/                # docker-compose for redis, 2 app instances, nginx round-robin
 ├── docs/                  # these documents and the ADRs
 ├── Makefile, .golangci.yml, .github/workflows/ci.yml, go.mod, LICENSE, README.md, CHANGELOG.md
 ```
 
 Rules: no `pkg/` directory; `internal/` for anything not part of the API; the root package has no
-dependency on `httpx`, `ginx`, `gin` or `go-redis` (they depend on it, not the reverse).
+dependency on `httpx`, `ginx`, `gin` or `go-redis` (they depend on it, not the reverse). The root
+package only forwards to `internal/core`: behaviour, invariants and their tests belong in
+`internal/core` (ADR 0009).
 
 ## 3. Data model
 
