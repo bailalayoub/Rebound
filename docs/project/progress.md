@@ -32,7 +32,7 @@ outside it (see the report).
   (`TestChecker_ReportsEachInjectedViolation`), and nothing on a clean server or the real Hub.
 - An edit to `run.sh` while it ran made bash liable to execute a fragment of the new text: the run
   was aborted and restarted, and the script now parses whole before it runs.
-- ramp-1 (nginx as shipped): the knee is nginx itself. `deploy/nginx.conf` has `events {}`, i.e. one
+- ramp-1 (nginx as shipped): the knee is nginx itself. `examples/deploy/nginx.conf` has `events {}`, i.e. one
   worker with 512 connections; from 200 streams it logs `worker_connections are not enough`
   (1 377 661 times) and clients see transport errors. The instances logged no warning or error;
   every failed stream still retained was `done` at seq 401 in Redis.

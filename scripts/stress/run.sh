@@ -23,7 +23,7 @@ out="${OUT:-$root/docs/benchmarks/v0.1.0/raw}"
 mkdir -p "$out"
 hostout="$out"
 if pwd -W >/dev/null 2>&1; then hostout="$(cd "$out" && pwd -W)"; fi
-compose=(docker compose -f "$hostroot/deploy/docker-compose.yml" -f "$hostroot/scripts/stress/compose.yml")
+compose=(docker compose -f "$hostroot/examples/deploy/docker-compose.yml" -f "$hostroot/scripts/stress/compose.yml")
 # NGINX=tuned raises nginx's connection limits (scripts/stress/nginx-tuned.conf); default: as shipped.
 if [ "${NGINX:-shipped}" = tuned ]; then compose+=(-f "$hostroot/scripts/stress/nginx-tuned.yml"); fi
 # REDIS=aof gives Redis an append-only file (scripts/stress/redis-aof.yml); default: no persistence.

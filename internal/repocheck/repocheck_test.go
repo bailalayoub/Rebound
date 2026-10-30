@@ -47,7 +47,7 @@ func publishedPorts(t *testing.T, path string) []string {
 // Docker publishes on every interface, and these services have no authentication.
 func TestComposePortsAreLocalOnly(t *testing.T) {
 	t.Parallel()
-	for _, path := range []string{"scripts/dev-redis.yml", "deploy/docker-compose.yml", "playground/docker-compose.yml"} {
+	for _, path := range []string{"scripts/dev-redis.yml", "examples/deploy/docker-compose.yml", "examples/playground/docker-compose.yml"} {
 		ports := publishedPorts(t, path)
 		require.NotEmpty(t, ports, "%s publishes no port: is the parser still right?", path)
 		for _, p := range ports {
@@ -57,7 +57,7 @@ func TestComposePortsAreLocalOnly(t *testing.T) {
 }
 
 // .env files, where the playground keeps the API key, never enter a Docker build
-// context (deploy/Dockerfile copies the whole context into its build stage).
+// context (examples/deploy/Dockerfile copies the whole context into its build stage).
 func TestDockerBuildContextExcludesEnvFiles(t *testing.T) {
 	t.Parallel()
 	data, err := os.ReadFile(filepath.Join(root, ".dockerignore"))
